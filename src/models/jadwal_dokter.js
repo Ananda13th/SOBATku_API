@@ -14,12 +14,13 @@ JadwalDokter.getBySchedule = function(idSpesialisasi, hari, result) {
         "'nama', d.nama_dokter,"+ 
         "'kode_dokter', d.kode_dokter," +
         "'hari', j.hari,"+ 
-        "'jadwal', CONCAT('[', GROUP_CONCAT(JSON_OBJECT( 'jam', j.jam, 'id', jd.kode_jadwal) ) ,']')) AS data"+ 
+        "'aktif', jd.aktif, " +
+        "'jadwal', CONCAT('[', GROUP_CONCAT(JSON_OBJECT( 'jam', j.jam, 'id', jd.kode_jadwal, 'aktif', jd.aktif) ) ,']')) AS data"+ 
         " FROM dokter d"+
-        " JOIN jadwal_dokter jd ON d.id_dokter = jd.id_dokter"+ 
+        " JOIN jadwal_dokter jd ON d.kode_dokter = jd.kode_dokter"+ 
         " JOIN jadwal j ON jd.id_jadwal = j.id_jadwal" +
         " WHERE d.id_spesialisasi = ? AND j.hari= ?" +
-        " GROUP BY d.id_dokter, j.hari;", [idSpesialisasi, hari],
+        " GROUP BY d.kode_dokter, j.hari;", [idSpesialisasi, hari],
         function(err, res) {
             if(err) {
                 result(err, null);
@@ -30,7 +31,7 @@ JadwalDokter.getBySchedule = function(idSpesialisasi, hari, result) {
     )
 }
 
-JadwalDokter.getById = function(idDokter, result) {
+JadwalDokter.getById = function(kodeDokter, result) {
     dbConn.query(
         "SELECT JSON_OBJECT("+
         "'nama', d.nama_dokter,"+ 
@@ -38,10 +39,10 @@ JadwalDokter.getById = function(idDokter, result) {
         "'hari', j.hari,"+ 
         "'jadwal', CONCAT('[', GROUP_CONCAT(JSON_OBJECT( 'jam', j.jam, 'id', jd.kode_jadwal) ) ,']')) AS data"+ 
         " FROM dokter d"+
-        " JOIN jadwal_dokter jd ON d.id_dokter = jd.id_dokter"+ 
+        " JOIN jadwal_dokter jd ON d.kode_dokter = jd.kode_dokter"+ 
         " JOIN jadwal j ON jd.id_jadwal = j.id_jadwal" +
-        " WHERE d.id_dokter = ?" +
-        " GROUP BY d.id_dokter, j.hari;", idDokter,
+        " WHERE d.kode_dokter = ?" +
+        " GROUP BY d.kode_dokter, j.hari;", kodeDokter,
         function(err, res) {
             if(err) {
                 console.log(err);
