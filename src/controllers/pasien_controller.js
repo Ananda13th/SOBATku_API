@@ -22,7 +22,7 @@ exports.createPasien = function async(req, res) {
 }
 
 exports.searchPasien = function async(req, res) {
-    Pasien.search(req.params.noRm, function(error, result) {
+    Pasien.search(req.params.noRm, req.params.namaBelakang, function(error, result) {
         if(error)
             res.send("Error : ", error);
         else {

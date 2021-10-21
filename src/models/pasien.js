@@ -38,8 +38,10 @@ Pasien.create = function(newPasien, result) {
     )
 }
 
-Pasien.search = function(noRm, result) {
-    dbConn.query("SELECT * FROM pasien WHERE nomor_rm = ?", noRm,
+Pasien.search = function(noRm, namaBelakang, result) {
+    namaBelakang = "%"+namaBelakang
+    console.log(namaBelakang);
+    var test = dbConn.query("SELECT * FROM pasien WHERE nomor_rm = ? AND nama_pasien LIKE ?", [noRm, namaBelakang],
         function(err, res) {
             if(err) {
                 console.log("error: ", err);
@@ -52,6 +54,8 @@ Pasien.search = function(noRm, result) {
             }   
         }
     )
+
+    console.log(test.sql);
 }
 
 module.exports = Pasien;
