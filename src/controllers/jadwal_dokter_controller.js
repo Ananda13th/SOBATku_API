@@ -7,7 +7,6 @@ exports.getJadwalDokter = function(req, res) {
         function(error, jadwal) {
             if(error) {
                 res.json({error_code: 400, message: "Failed", data : []});
-                res.send(error);
             }
             jadwal.forEach((data) => {
                 console.log(data.data);
@@ -23,7 +22,7 @@ exports.getJadwalDokter = function(req, res) {
 
 exports.getJadwalDokterById = function(req, res) {
     var dataCollection = [];
-    Jadwal_Dokter.getById(req.params.idDokter, 
+    Jadwal_Dokter.getById(req.params.kodeDokter, 
         function(error, result) {
             if(error) {
                 res.json({error_code: 400, message: "Failed", data : []});
