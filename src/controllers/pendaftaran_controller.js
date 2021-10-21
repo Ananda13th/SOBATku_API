@@ -6,6 +6,7 @@ const PendaftaranResp = require('../models/pendaftaranResp');
 exports.createPendaftaran = async function(req, res) {
     const timestamp = createTimestamp();
     const signature = createSignature(timestamp);
+    
     var axios = require('axios');
     var config = {
         headers : 
@@ -20,7 +21,7 @@ exports.createPendaftaran = async function(req, res) {
         await axios.post('http://192.167.4.73/antrian/public/index.php/antrian', req.body, config)
         .then(function(response) {
             if(response.data.status == "100") {
-                PendaftaranResp.create(response.data, req.params.idUser, req.body.kodejadwal, req.body.kodeDokter,
+                PendaftaranResp.create(response.data, req.params.idUser, req.body.kodejadwal, req.body.str,
                     function(error, result) {
                         if(error) {
                             console.log("Di crate : " + error);
@@ -38,7 +39,7 @@ exports.createPendaftaran = async function(req, res) {
                                     nomor_rm    : req.body.rm,
                                     id_user     : req.params.idUser,
                                     keterangan  : "Pendaftaran Poli",
-                                    perubahan   : "Pendaftaran Berhasil"
+                                    perubahan   : "Pendaftaran Berhasil"+ "\nKode Dokter : " + req.body.str + "\nKode Jadwal" + req.body.kodejadwal
                                 })
                             Log.create(newNotif, function(error, result) {});
                             res.send({error_code: 200, message: response.data.message});
@@ -49,8 +50,8 @@ exports.createPendaftaran = async function(req, res) {
                 var newNotif = new Log( {
                     nomor_rm    : req.body.rm,
                     id_user     : req.params.idUser,
-                    keterangan  : "Pendaftaran",
-                    perubahan   : response.data.message
+                    keterangan  : "Pendaftaran Poli",
+                    perubahan   : response.data.message + "\nKode Dokter : " + req.body.str + "\nKode Jadwal" + req.body.kodejadwal
                 })
             Log.create(newNotif, function(error, result) {});
                 res.send({message: response.data.message});
