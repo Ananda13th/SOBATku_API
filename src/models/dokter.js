@@ -79,4 +79,17 @@ Dokter.hapusFavorit = function(idUser, idDokter, result) {
     )
 }
 
+Dokter.cekCuti = function(kodeDokter, result) {
+    dbConn.query("SELECT * FROM cuti_dokter WHERE kode_dokter = ? ORDER BY timestamp LIMIT 1", kodeDokter,
+        function(err, res) {
+            if(err) {
+                console.log("error: ", err);
+                result(err, null);
+            } else {
+                result(null, res);
+            }
+        }
+    )
+}
+
 module.exports = Dokter;
