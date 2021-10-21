@@ -49,16 +49,13 @@ function sendNotifFromFirebase(noAntrian, data) {
                     snapshot => {
                         snapshot.forEach( (pasien) => {
                             if(pasien.data().no_rm == data.nomor_rm) {
+                                console.log(pasien.data().token);
                                 var regkey = pasien.data().token;
                                 var payload = {
                                     notification: {
-                                        title   :'Antrian ' + data.dokter,
-                                        body    :"Pasien : " + pasien.id + '\nAntrian Anda Kurang : ' + counter + "\nAntrian Sekarang : " + noAntrian
-                                    },
-                                    data : {
                                         title   : 'Antrian ' + data.dokter,
                                         body    : "Pasien : " + pasien.id + '\nAntrian Anda Kurang : ' + counter + "\nAntrian Sekarang : " + noAntrian,
-                                        id      : data.nomor_rm
+                                        sound   : "default"
                                     }
                                 };
                                 var opt = {
