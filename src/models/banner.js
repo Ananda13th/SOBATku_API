@@ -8,7 +8,7 @@ var Banner = function(dokter) {
 }
 
 Banner.get = function(result) {
-    dbConn.query("SELECT * FROM banner",
+    dbConn.query("SELECT * FROM `banner` WHERE CURRENT_DATE <= selesai ORDER BY mulai DESC",
         function(err, res) {
             if(err) {
                 console.log("error: ", err);
