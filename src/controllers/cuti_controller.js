@@ -7,12 +7,12 @@ exports.cariJadwalCuti = function async(req, res) {
         if(error)
             res.send(error);
         if(result.length == 0) {
-            res.json({error_code: 200, message: "Success", data : false})
+            res.json({error_code: 200, message: "Success", data : false});
         }
         else {
-            res.json({error_code: 200, message: "Success", data : true})
+            res.json({error_code: 200, message: "Success", data : true});
         }
-    })
+    });
 }
 
 exports.buatJadwalCuti = function async(req, res) {
@@ -33,22 +33,21 @@ exports.buatJadwalCuti = function async(req, res) {
                         if(req.params.hari == jadwal.hari && req.params.hari == start.weekday()) {
                             if(req.params.jam != null && req.params.jam == jadwal.jam.substring(0,2)) {
                                 var kodeJadwal = request.kode_dokter + "." + start.format('YYMMDD') + jadwal.jam.substring(0,2);
-                                Cuti.inputCuti(request.kode_dokter, kodeJadwal, 
-                                    function(error, result) {}
-                                );
+                                Cuti.inputCuti(request.kode_dokter, kodeJadwal, function(error, result) {});
+                            }
+                            else if(req.params.jam == null) {
+                                var kodeJadwal = request.kode_dokter + "." + start.format('YYMMDD') + jadwal.jam.substring(0,2);
+                                Cuti.inputCuti(request.kode_dokter, kodeJadwal, function(error, result) {});
                             }
                         }
                         start.add(1, 'days');
                     }
                 } 
                 else {
-                    console.log(req.params.hari != null)
                     while(start.isSameOrBefore(endDate)) {
                         if(jadwal.hari == start.weekday()) {
                             var kodeJadwal = request.kode_dokter + "." + start.format('YYMMDD') + jadwal.jam.substring(0,2);
-                            Cuti.inputCuti(request.kode_dokter, kodeJadwal, 
-                                function(error, result) {}
-                            );
+                            Cuti.inputCuti(request.kode_dokter, kodeJadwal, function(error, result) {});
                         }
                         start.add(1, 'days');
                     }
