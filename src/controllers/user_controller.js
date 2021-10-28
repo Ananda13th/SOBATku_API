@@ -3,6 +3,7 @@ const Log = require('../models/log');
 const User = require('../models/user');
 const Vonage = require('@vonage/server-sdk');
 const bcrypt = require("bcrypt");
+const router = require('../routes/user_route');
 
 const vonage = new Vonage({
     apiKey: "9e0312e3",
@@ -23,7 +24,7 @@ exports.getUser = async function (req, res) {
                     if(validPassword)
                         res.send({error_code: 200, message: "Success!", data: result});
                     else
-                          //Bila Nomer HP Ditemukan Tapi Password Salahs
+                          //Bila Nomer HP Ditemukan Tapi Password Salah
                         res.send({error_code: 400, message: "Success!", data: []});
                 }
             }
@@ -106,6 +107,21 @@ exports.resetPassword = async function (req,res) {
             }
             else {  
                 sendMessage(req.params.noHp, randomStr);
+                res.send({error_code: "200", message: "Success!"});
+            }
+        }
+    )
+}
+
+exports.aktivasi = function async (req, res) {
+    console.log("Aktivasi")
+    User.aktivasi(req.params.nomorHp, 
+        function(err, result) {
+            if(err) {
+                console.log("Error");
+                res.send("Error : ", err);  
+            }
+            else {  
                 res.send({error_code: "200", message: "Success!"});
             }
         }
