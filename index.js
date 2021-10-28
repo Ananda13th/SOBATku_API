@@ -47,7 +47,8 @@ const bannerRoutes = require('./src/routes/banner_route');
 const spesialisasiRoutes = require('./src/routes/spesialisasi.route');
 const verificationRoutes = require('./src/routes/verification_routes');
 const favoritRoutes = require('./src/routes/favorit_routes');
-const cutiRoutes = require('./src/routes/cuti_route')
+const cutiRoutes = require('./src/routes/cuti_route');
+const aktivasiRoutes = require('./src/routes/aktivasi_route');
 
 app.use('/api/v1/pasien', pasienRoutes);
 app.use('/api/v1/user', userRoutes);
@@ -62,6 +63,7 @@ app.use('/api/v1/spesialisasi', spesialisasiRoutes);
 app.use('/api/v1/verifikasi', verificationRoutes);
 app.use('/api/v1/favorit', favoritRoutes);
 app.use('/api/v1/cuti', cutiRoutes);
+app.use('/api/v1/aktivasi', aktivasiRoutes);
 
 
 
