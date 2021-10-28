@@ -10,7 +10,7 @@ var Pasien = function(pasien) {
 
 Pasien.get = function(idUser, result) {
     dbConn.query(
-        "SELECT ps.nama_pasien, ps.nomor_rm, ps.nomor_bpjs, ps.nomor_ktp FROM pairing_user_pasien p " +
+        "SELECT ps.nama_pasien, ps.nomor_rm, ps.nomor_bpjs, ps.nomor_ktp, ps.jenis_kelamin FROM pairing_user_pasien p " +
         " JOIN user u ON p.id_user = u.id_user" +
         " JOIN pasien ps ON ps.nomor_rm = p.nomor_rm" + 
         " WHERE u.id_user = ?", idUser,
