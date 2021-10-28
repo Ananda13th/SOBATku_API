@@ -9,12 +9,10 @@ exports.getJadwalDokter = function(req, res) {
                 res.json({error_code: 400, message: "Failed", data : []});
             }
             jadwal.forEach((data) => {
-                console.log(data.data);
                 var obj = JSON.parse(data.data);
                 obj.jadwal = JSON.parse(obj.jadwal);
                 dataCollection.push(obj);
             })
-            console.log(dataCollection);
             res.json({error_code: 200, message: "Success", data : dataCollection})
         }
     );
