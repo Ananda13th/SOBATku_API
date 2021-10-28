@@ -104,7 +104,7 @@ User.verify = function(nomorHp, kodeOtp, result) {
 
 User.resend = function(nomorHp, kodeOtp, result) {
     dbConn.query(
-        "Update daftar_otp d set d.kode_otp=? WHERE d.nomor_hp= ?", [kodeOtp, nomorHp], 
+        "UPDATE daftar_otp d SET d.kode_otp=? WHERE d.nomor_hp= ?", [kodeOtp, nomorHp], 
         function(err, res) {
             if(err) {
                 console.log("error: ", err);
@@ -112,6 +112,20 @@ User.resend = function(nomorHp, kodeOtp, result) {
             } else {
                 result(null, res);
             }
+        }
+    )
+}
+
+User.aktivasi = function(nomorHp, result) {
+    dbConn.query(
+        "UPDATE user SET aktif = '1' WHERE nomor_hp = ? ", nomorHp,
+        function(err, res) {
+            if(err) {
+                console.log("error", err)
+                result(err, null);
+            } else {
+                result(null, res);
+            } 
         }
     )
 }
