@@ -5,6 +5,7 @@ var Log = function(log) {
     this.id_log = log.id_log;
     this.nomor_rm = log.nomor_rm;
     this.id_user = log.id_user;
+    this.kode_dokter = log.kode_dokter;
     this.keterangan = log.keterangan;
     this.perubahan = log.perubahan;
 }
