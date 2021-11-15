@@ -24,10 +24,10 @@ exports.createPendaftaran = async function(req, res) {
                 PendaftaranResp.create(response.data, req.params.idUser, req.body.kodejadwal, req.body.str,
                     function(error, result) {
                         if(error) {
-                            console.log("Di crate : " + error);
                             var newNotif = new Log({
                                     nomor_rm    : req.body.rm,
                                     id_user     : req.params.idUser,
+                                    kode_dokter : req.body.str,
                                     keterangan  : "Pendaftaran Poli",
                                     perubahan   : "Pendaftaran Gagal : " + error,
                                 })
@@ -38,8 +38,9 @@ exports.createPendaftaran = async function(req, res) {
                             var newNotif = new Log( {
                                     nomor_rm    : req.body.rm,
                                     id_user     : req.params.idUser,
+                                    kode_dokter : req.body.str,
                                     keterangan  : "Pendaftaran Poli",
-                                    perubahan   : "Pendaftaran Berhasil"+ "\nKode Dokter : " + req.body.str + "\nKode Jadwal" + req.body.kodejadwal
+                                    perubahan   : "Pendaftaran Berhasil"+ "\nKode Dokter : " + req.body.str + "\nKode Jadwal : " + req.body.kodejadwal
                                 })
                             Log.create(newNotif, function(error, result) {});
                             res.send({error_code: 200, message: response.data.message});
@@ -50,8 +51,9 @@ exports.createPendaftaran = async function(req, res) {
                 var newNotif = new Log( {
                     nomor_rm    : req.body.rm,
                     id_user     : req.params.idUser,
+                    kode_dokter : req.body.str,
                     keterangan  : "Pendaftaran Poli",
-                    perubahan   : response.data.message + "\nKode Dokter : " + req.body.str + "\nKode Jadwal" + req.body.kodejadwal
+                    perubahan   : response.data.message + "\nKode Dokter : " + req.body.str + "\nKode Jadwal : " + req.body.kodejadwal
                 })
             Log.create(newNotif, function(error, result) {});
                 res.send({message: response.data.message});
@@ -63,6 +65,7 @@ exports.createPendaftaran = async function(req, res) {
         var newNotif = new Log({
                 nomor_rm    : req.body.rm,
                 id_user     : req.params.idUser,
+                kode_dokter : req.body.str,
                 keterangan  : "Pendaftaran Poli",
                 perubahan   : "Pendaftaran Gagal : "+ err.response.data.message,
             })
@@ -72,7 +75,7 @@ exports.createPendaftaran = async function(req, res) {
 }
 
 exports.getPendaftaran = function async(req, res) {
-    PendaftaranResp.get(req.params.idUser, function(error, result) {
+    PendaftaranResp.get(req.params.noRm, function(error, result) {
         if(error)
             res.send(error);
         res.send({data: result});
