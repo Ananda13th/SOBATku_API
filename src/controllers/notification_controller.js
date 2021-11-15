@@ -1,7 +1,10 @@
-var serviceAccount = require("../../flutter-fcm-2cfd1-firebase-adminsdk-zy4vc-8172239293.json");
+var serviceAccount = require("../../flutter-fcm-2cfd1-firebase-adminsdk-zy4vc-62e802105e.json");
 var admin = require("firebase-admin");
+const {json} = require('body-parser');
 const PendaftaranResp = require('../models/pendaftaranResp');
 const Notifikasi = require("../models/notifikasi");
+const Pairing = require("../models/pairing");
+const e = require("express");
 
 
 admin.initializeApp({
@@ -19,72 +22,137 @@ exports.getNotificationList = function async(req, res) {
     })
 }
 
-exports.sendNotification = function async(req, res) {
-    PendaftaranResp.search(req.params.kodeJadwal, function(error, result) {
+exports.sendNotification = function async(kodeJadwal, antrian, res) {
+    PendaftaranResp.search(kodeJadwal, function(error, result) {
         if(error) {
-            res.send("Error : ", error);
+            console.log("Error : ", error);
         }
         else {
            result.forEach( value => {
                try {
-                sendNotifFromFirebase(req.params.antrian, value);
+                   if(value.id_user == "Dari RS") {
+                        Pairing.search(value.nomor_rm, function(error, result) {
+                            if(error)
+                                res.send(error);
+                            if(result.length == 0)
+                                console.log("Pasien Tidak Ada Di App Database App Sobatku");
+                            else
+                                result.forEach((pairing) => {
+                                    var data = JSON.parse(JSON.stringify(pairing));
+                                    sendNotifFromFirebase(antrian, data, value, value.antrian);
+                                })
+                        })
+                    } 
+                   else {
+                        sendNotifFromFirebase(antrian, value, value, value.antrian);
+                   }
                }
                catch (error) {
                 console.error(error);
               }
            });
-           res.send("Done")
         }
     });
 }
 
-function sendNotifFromFirebase(noAntrian, data) {
-    var counter = data.antrian-noAntrian;
-    if(counter == 10 || counter <=5 || noAntrian == 1 && counter > 0) {
-        var database = db.collection('user').get();
-        database.then(user => {
-            user.forEach( subcollection => {
-                db.collection('user').doc(subcollection.id).collection('pasien').get()
-                .then(
-                    snapshot => {
-                        snapshot.forEach( (pasien) => {
-                            if(pasien.data().no_rm == data.nomor_rm) {
-                                console.log(pasien.data().token);
-                                var regkey = pasien.data().token;
-                                var payload = {
-                                    notification: {
-                                        title   : 'Antrian ' + data.dokter,
-                                        body    : "Pasien : " + pasien.id + '\nAntrian Anda Kurang : ' + counter + "\nAntrian Sekarang : " + noAntrian,
-                                        sound   : "default"
-                                    }
-                                };
-                                var opt = {
-                                    priority:"high",
-                                    timeToLive: 60*60*24
-                                }
-                                admin.messaging().sendToDevice(regkey, payload, opt)
-                                .then(function(response) {
-                                    var newNotif = new Notifikasi( 
-                                        {
-                                            id_user : pasien.ref.parent.parent.id,
-                                            judul   : 'Antrian ' + data.dokter,
-                                            berita  : 'Antrian Sekarang : '+ noAntrian
-                                        }
-                                    )
-                                    Notifikasi.create(newNotif, function(error, result) {
-                                        if(error) {
-                                            console.log(error);
-                                        }
-                                    });
-                                    console.log("Berhasil");
-                                }).catch(function(error) {
-                                    console.log("Error: ", error);
-                                });
+function sendNotifFromFirebase(antrianBerjalan, data, dataTransaksi, antrian) {
+    var counter = antrian-antrianBerjalan;
+    if(counter == 10 || counter <=5 || antrianBerjalan == 1 && counter > 0) {
+         db.collection('user').doc(data.id_user.toString()).collection('pasien').get()
+        .then(
+            snapshot => {
+                snapshot.forEach( (pasien) => {
+                    if(pasien.data().no_rm == data.nomor_rm) {
+                        var regkey = pasien.data().token;
+                        var payload = {
+                            notification: {
+                                title   : 'Antrian ' + dataTransaksi.dokter,
+                                body    : "Pasien : " + pasien.id + '\nAntrian Anda Kurang : ' + counter + "\nAntrian Sekarang : " + antrianBerjalan,
+                                sound   : "default"
                             }
-                        })
+                        };
+                        var opt = {
+                            priority:"high",
+                            timeToLive: 60*60*24
+                        }
+                        admin.messaging().sendToDevice(regkey, payload, opt)
+                        .then(function(response) {
+                            var newNotif = new Notifikasi( 
+                                {
+                                    id_user : pasien.ref.parent.parent.id,
+                                    judul   : 'Antrian ' + dataTransaksi.dokter,
+                                    berita  : 'Antrian Sekarang : '+ antrianBerjalan
+                                }
+                            )
+                            Notifikasi.create(newNotif, function(error, result) {
+                                if(error) {
+                                    console.log(error);
+                                }
+                            });
+                            console.log("Berhasil");
+                        }).catch(function(error) {
+                            console.log("Error: ", error);
+                        });
                     }
-                )
-            })
-        })
+                })
+            }
+        )
+
     }
+}
+
+exports.notifikasiBebas = function async(req, res) {
+    Pairing.search(req.params.noRm, function(error, result) {
+        if(error)
+            res.send(error);
+        else
+            result.forEach((pairing) => {
+                var data = JSON.parse(JSON.stringify(pairing))
+                sendCustomNotifFromFirebase(data, req.body.notifikasi);
+            })
+            res.send({error_code: 200, message: "Success"});
+    })
+}
+
+function sendCustomNotifFromFirebase(data, notifikasi) {
+    var id_user = data.id_user.toString();
+    db.collection('user').doc(id_user).collection('pasien').get()
+    .then(
+        snapshot => {
+            snapshot.forEach( (pasien) => {
+                if(pasien.data().no_rm == data.nomor_rm) {
+                    var regkey = pasien.data().token;
+                    var payload = {
+                        notification: {
+                            title   : 'Notifikasi Pasien ' + pasien.id,
+                            body    : notifikasi,
+                            sound   : "default"
+                        }
+                    };
+                    var opt = {
+                        priority:"high",
+                        timeToLive: 60*60*24
+                    }
+                    admin.messaging().sendToDevice(regkey, payload, opt)
+                    .then(function(response) {
+                        var newNotif = new Notifikasi( 
+                            {
+                                id_user : data.id_user,
+                                judul   : 'Notifikasi Pasien',
+                                berita  : notifikasi,
+                            }
+                        )
+                        Notifikasi.create(newNotif, function(error, result) {
+                            if(error) {
+                                console.log(error);
+                            }
+                        });
+                        console.log("Berhasil");
+                    }).catch(function(error) {
+                        console.log("Error: ", error);
+                    });
+                }
+            })
+        }
+    )
 }
