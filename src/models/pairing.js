@@ -34,4 +34,17 @@ Pairing.delete = function(idUser, noRm, result) {
     )
 }
 
+Pairing.search = function(noRm, result) {
+    dbConn.query("SELECT * FROM pairing_user_pasien WHERE nomor_rm=?", noRm,
+        function(err, res) {
+            if(err) {
+                console.log("error : ", err);
+                result(err, null);
+            }
+            else
+                result(null, res);
+        }
+    )
+}
+
 module.exports = Pairing;

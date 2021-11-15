@@ -25,6 +25,22 @@ User.get = function(noHp, result) {
     )
 }
 
+User.getAll = function(result) {
+    // var data = password.replace(/(\r\n|\n|\r)/gm, "");
+    dbConn.query(
+        "SELECT * FROM user", 
+        function(err, res) {
+            if(err) {
+                console.log("error : ", err);
+                result(err, null);
+            } else {
+                console.log(res);
+                result(null, res);
+            }
+        }
+    )
+}
+
 User.create = function(newUser, result) {
     dbConn.query(
         "INSERT INTO user SET ?", newUser,
@@ -54,6 +70,22 @@ User.update = function(id, email, password, result) {
         }
     )
 }
+
+User.updateAdmin = function(nama, noHp, id, email, result) {
+    dbConn.query(
+        "UPDATE user SET nama_user=?, nomor_hp=?, email= ? WHERE id_user = ?", [nama, noHp, email,password,id], 
+        function(err, res) {
+            if(err) {
+                console.log("error: ", err);
+                result(err, null);
+            } else {
+                console.log(res);
+                result(null, res);
+            }
+        }
+    )
+}
+
 
 User.resetPassword = function(noHp, newPassword, result) {
     dbConn.query(
@@ -93,7 +125,8 @@ User.verify = function(nomorHp, kodeOtp, result) {
                 console.log("error: ", err);
                 result(err, null);
             } else {
-                if(res.changedRows == 0)
+                console.log(res);
+                if(res.changedRows == 0 && res.affectedRows == 0)
                     result(null, null);
                 else
                     result(null, res);

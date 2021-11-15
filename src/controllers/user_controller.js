@@ -32,6 +32,23 @@ exports.getUser = async function (req, res) {
     );
 }
 
+exports.getAllUser = async function (req, res) {
+    User.getAll(
+        function(err, result) {
+            if(err)
+                res.send(err);
+            else {
+                //Bila Nomer HP Tidak Ditemukan
+                if(result.length == 0)
+                    res.send({error_code: 400, message: "Success!", data: []});
+                else {
+                    res.send({error_code: 200, message: "Success!", data: result});
+                }
+            }
+        }
+    );
+}
+
 exports.createUser = async function (req, res) {
     const salt = await bcrypt.genSalt(10);
     plainPassword = req.body.password;
@@ -42,6 +59,7 @@ exports.createUser = async function (req, res) {
             var newNotif = new Log( {
                 nomor_rm    : "-",
                 id_user     : "-",
+                kode_dokter : "-",
                 keterangan  : "Pendaftaran User",
                 perubahan   : "Pendaftaran User Gagal"
             })
@@ -52,6 +70,7 @@ exports.createUser = async function (req, res) {
             var newNotif = new Log( {
                 nomor_rm    : "-",
                 id_user     : "-",
+                kode_dokter : "-",
                 keterangan  : "Pendaftaran User",
                 perubahan   : 
                 "Pendaftaran User Berhasil \n" +
@@ -94,11 +113,37 @@ exports.updateUSer = async function (req, res) {
     )
 }
 
+exports.updateUserAdmin = async function (req, res) {
+    User.updateAdmin(req.params.nama, req.params.noHp, req.params.id, req.params.email,
+        function(err, result) {
+            if(err) {
+                res.send("Error : ", err);  
+                var newNotif = new Log( {
+                    nomor_rm    : "-",
+                    id_user     : req.params.id,
+                    keterangan  : "Update User",
+                    perubahan   : "Update User Gagal"
+                })
+                Log.create(newNotif, function(error, result) {});
+            }
+            else {   
+                var newNotif = new Log( {
+                    nomor_rm    : "-",
+                    id_user     : req.params.id,
+                    keterangan  : "Update User",
+                    perubahan   : "Update User Berhasil, email : " + req.params.email + " password: " + req.params.password
+                })
+                Log.create(newNotif, function(error, result) {});
+                res.send({error_code: 200, message: "Success!", data:result});
+            }
+        }
+    )
+}
+
 exports.resetPassword = async function (req,res) {
     console.log("Reset Password");
-    var randomStr = makeid(6);
     const salt = await bcrypt.genSalt(10);
-    newPassword = await bcrypt.hash(randomStr, salt);
+    newPassword = await bcrypt.hash(req.params.password, salt);
     User.resetPassword(req.params.noHp, newPassword,
         function(err, result) {
             if(err) {
@@ -106,7 +151,6 @@ exports.resetPassword = async function (req,res) {
                 res.send("Error : ", err);  
             }
             else {  
-                sendMessage(req.params.noHp, randomStr);
                 res.send({error_code: "200", message: "Success!"});
             }
         }
