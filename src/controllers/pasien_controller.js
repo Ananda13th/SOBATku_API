@@ -1,5 +1,7 @@
 const {json} = require('body-parser');
 const Pasien = require('../models/pasien');
+const Log = require('../models/log');
+
 
 exports.getPasien = function(req, res) {
     Pasien.get(req.params.idUser, function(error, pasien) {
@@ -9,14 +11,30 @@ exports.getPasien = function(req, res) {
     });
 }
 
-exports.createPasien = function async(req, res) {
-    const newPasien = new Pasien(req.body);
-    Pasien.create(newPasien, function(error, pasien) {
+exports.createPasien = function async(pasien, res) {
+    console.log("Data Pasien : ", pasien);
+    Pasien.create(pasien, function(error, result) {
         if(error) {
-            res.send("Error : ", error);
+            console.log(error)
+            var newNotif = new Log( {
+                nomor_rm    : pasien.nomor_rm,
+                id_user     : "-",
+                kode_dokter : "-",
+                keterangan  : "Tambah User Dari RS",
+                perubahan   : "Pendaftaran Gagal : "+ error 
+            })
+            Log.create(newNotif, function(error, result) {});
         }
         else {
-            res.send({error_code: 200, message: "Success", data: pasien});
+            console.log(result);
+            var newNotif = new Log({
+                nomor_rm    : pasien.nomor_rm,
+                id_user     : "-",
+                kode_dokter : "-",
+                keterangan  : "Tambah User Dari RS",
+                perubahan   : "Pendaftaran Berhasil : " + "\nNama Pasien : " + pasien.nama_pasien + "\nNomor RM : " + pasien.nomor_rm,
+            })
+            Log.create(newNotif, function(error, result) {});
         }
     });
 }
@@ -34,4 +52,15 @@ exports.searchPasien = function async(req, res) {
             }
         }  
     })
+}
+
+exports.updateBpjs = function async(req, res) {
+    Pasien.update(req.params.nomorBpjs, req.params.nomorRm,
+        function(error, result) {
+            if(error)
+                res.send("Error : ", error);
+            else
+            res.send({error_code: 200, message: "Success"});
+        }
+    );
 }

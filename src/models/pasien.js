@@ -38,10 +38,23 @@ Pasien.create = function(newPasien, result) {
     )
 }
 
+Pasien.update = function(noBpjsBaru, nomorRm, result) {
+    dbConn.query("UPDATE pasien SET nomor_bpjs = ? WHERE nomor_rm = ? ", [noBpjsBaru,nomorRm],
+        function(err,res) {
+            if(err) {
+                console.log("error: ", err);
+                result(err, null);
+            } else {
+                result(null, res);
+            }
+        }
+    )
+}
+
 Pasien.search = function(noRm, namaBelakang, result) {
     namaBelakang = "%"+namaBelakang
     console.log(namaBelakang);
-    var test = dbConn.query("SELECT * FROM pasien WHERE nomor_rm = ? AND nama_pasien LIKE ?", [noRm, namaBelakang],
+    dbConn.query("SELECT * FROM pasien WHERE nomor_rm = ? AND nama_pasien LIKE ?", [noRm, namaBelakang],
         function(err, res) {
             if(err) {
                 console.log("error: ", err);
@@ -54,8 +67,35 @@ Pasien.search = function(noRm, namaBelakang, result) {
             }   
         }
     )
+}
 
-    console.log(test.sql);
+Pasien.searchForEdit = function(request, result) {
+    dbConn.query("SELECT * FROM pasien WHERE nomor_rm = ?", request.new_mr,
+        function(err, res) {
+            if(err) {
+                console.log("error: ", err);
+                result(err, null);
+            } else {
+                if(!res.length)
+                    result(null, null);
+                else
+                    result(null, res);
+            }   
+        }
+    )
+}
+
+Pasien.updateFromMedin = function(request, result) {
+    dbConn.query("UPDATE pasien SET nama_pasien = ? WHERE nomor_rm = ? ", [request.name, request.new_mr],
+    function(err,res) {
+        if(err) {
+            console.log("error: ", err);
+            result(err, null);
+        } else {
+            result(null, res);
+        }
+    }
+)
 }
 
 module.exports = Pasien;
