@@ -38,6 +38,20 @@ Cuti.ambilJadwal = function(kodeDokter, result) {
     );
 }
 
+Cuti.ambilCuti = function(result) {
+    dbConn.query(
+        "SELECT * FROM jadwal_cuti ORDER BY timestamp DESC",
+        function(err, res) {
+            if(err) {
+                console.log("error: ", err);
+                result(err, null);
+            } else {
+                result(null, res);
+            }
+        }
+    )
+}
+
 Cuti.inputCuti = function(kodeDokter, kodeJadwal, result) {
     dbConn.query(
         "INSERT INTO jadwal_cuti SET kode_dokter=?, kode_jadwal=?", [kodeDokter,kodeJadwal], 

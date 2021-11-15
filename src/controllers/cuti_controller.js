@@ -15,6 +15,19 @@ exports.cariJadwalCuti = function async(req, res) {
     });
 }
 
+exports.ambilJadwalCuti = function async(req, res) {
+    Cuti.ambilCuti(function(error, result) {
+        if(error)
+            res.send(error);
+        if(result.length == 0) {
+            res.json({error_code: 200, message: "Success", data : []});
+        }
+        else {
+            res.json({error_code: 200, message: "Success", data : result});
+        }
+    })
+}
+
 exports.buatJadwalCuti = function async(req, res) {
     var request = req.body;
     var startDate = moment(request.mulai);
