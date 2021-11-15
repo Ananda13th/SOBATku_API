@@ -8,4 +8,17 @@ var Jadwal = function(jadwal) {
     this.jam            = jadwal.jam
 }
 
+Jadwal.getJam = function(result) {
+    dbConn.query("SELECT DISTINCT jam FROM `jadwal` GROUP BY jam ASC",
+    function(err, res) {
+        if(err) {
+            console.log("error: ", err);
+            result(err, null);
+        } else {
+            result(null, res);
+        }
+    }
+)
+}
+
 module.exports = Jadwal;
