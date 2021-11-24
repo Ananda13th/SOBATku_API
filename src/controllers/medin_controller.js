@@ -77,31 +77,6 @@ exports.getPendaftaran = function async(req, res) {
     )
 }
 
-exports.getAntrian = function async (req, res) {
-
-    console.log("Respon Mentah : ", req.body)
-    var response = req.body;
-    response.api_key = Buffer.from(response.api_key, 'base64').toString('ASCII');
-    response.kodejadwal = Buffer.from(response.kodejadwal, 'base64').toString('ASCII');
-    response.antrianberjalan = Buffer.from(response.antrianberjalan, 'base64').toString('ASCII');
-
-    console.log("Response Dekrip : ", response);
-
-    PendaftaranResp.updateAntrian(response.kodejadwal, response.antrianberjalan, 
-        function(error, result) {
-            if(error) {
-                console.log(error);
-                res.send({error_code : 500, message : "Terjadi Kesalahan"});
-            }
-            else {
-                console.log(result);
-                sendNotification(response.kodejadwal, response.antrianberjalan);
-                res.send({error_code : 200, message : "Sukses Update Antrian"});
-            }
-        }
-    )
-}
-
 exports.editPasien = function async (req, res) {
     var response = req.body;
     response.api_key = Buffer.from(response.api_key, 'base64').toString('ASCII');
@@ -124,7 +99,7 @@ exports.editPasien = function async (req, res) {
                     createPasien(pasien);
                     res.send({error_code : 200, message : "Sukses"});
                 }
-                else if(result != null)
+                else if(result != null) {
                     Pasien.updateFromMedin(response, 
                         function(error, result) {
                             if(error) {
@@ -134,7 +109,9 @@ exports.editPasien = function async (req, res) {
                                 console.log(result);
                                 res.send(result);
                             }
-                    })
+                        }
+                    )
+                }
             }
         }
     )
@@ -142,21 +119,21 @@ exports.editPasien = function async (req, res) {
 
 exports.getAntrian = function async (req, res) {
 
-    console.log("Respon Mentah : ", req.body)
     var response = req.body;
     response.api_key = Buffer.from(response.api_key, 'base64').toString('ASCII');
     response.kodejadwal = Buffer.from(response.kodejadwal, 'base64').toString('ASCII');
     response.antrianberjalan = Buffer.from(response.antrianberjalan, 'base64').toString('ASCII');
-    console.log("Response Dekrip : ", response);
-
+    
     PendaftaranResp.updateAntrian(response.kodejadwal, response.antrianberjalan, 
         function(error, result) {
             if(error) {
                 console.log(error);
-                res.send({error_code : 500, message : "Terjadi Kesalahan"});
+                res.send({error_code : 500, message : "Internal Server Error"});
+            }
+            if(result.affectedRows == 0) {
+                res.send({error_code : 201, message : "Antrian Tidak Ditemukan"});
             }
             else {
-                console.log(result);
                 sendNotification(response.kodejadwal, response.antrianberjalan);
                 res.send({error_code : 200, message : "Sukses Update Antrian"});
             }
@@ -166,9 +143,9 @@ exports.getAntrian = function async (req, res) {
 
 exports.deleteAntrian = function async(req, res) {
     var response = req.body;
-    // response.api_key = Buffer.from(response.api_key, 'base64').toString('ASCII');
-    // response.kodejadwal = Buffer.from(response.kodejadwal, 'base64').toString('ASCII');
-    // response.mr = Buffer.from(response.mr, 'base64').toString('ASCII');
+    response.api_key = Buffer.from(response.api_key, 'base64').toString('ASCII');
+    response.kodejadwal = Buffer.from(response.kodejadwal, 'base64').toString('ASCII');
+    response.mr = Buffer.from(response.mr, 'base64').toString('ASCII');
     console.log("Response Dekrip : ", response);
 
     PendaftaranResp.hapusTransaksi(response, 
@@ -183,7 +160,7 @@ exports.deleteAntrian = function async(req, res) {
                     perubahan   : "Gagal Hapus Pendaftaran, " + error
                 })
                 Log.create(newNotif, function(error, result) {});
-                res.send({error_code : 500, message : "Terjadi Kesalahan"});
+                res.send({error_code : 500, message : "Internal Server Error"});
             }
             if(result.length == 0) {
                 var newNotif = new Log({

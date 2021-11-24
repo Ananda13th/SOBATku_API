@@ -23,9 +23,8 @@ Cuti.cekCuti = function(kodeJadwal, result) {
 
 Cuti.ambilJadwal = function(kodeDokter, result) {
     dbConn.query(
-        "SELECT jadwal.hari, jadwal.jam FROM jadwal_dokter" +
+        "SELECT jadwal_dokter.hari, jadwal_dokter.jam FROM jadwal_dokter" +
         " JOIN dokter ON dokter.kode_dokter = jadwal_dokter.kode_dokter" +
-        " JOIN jadwal ON jadwal.id_jadwal = jadwal_dokter.id_jadwal" +
         " WHERE dokter.kode_dokter = ?", kodeDokter, 
         function(err, res) {
             if(err) {

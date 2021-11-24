@@ -45,10 +45,10 @@ exports.searchPasien = function async(req, res) {
             res.send("Error : ", error);
         else {
             if(result == null) {
-                res.send({error_code: 400, message: "Data Pasien Tidak Ada!"});
+                res.send({error_code: 201, message: "Data Pasien Tidak Ada!"});
             }
             else {
-                res.send({error_code: 200, message: "Success"});
+                res.send({error_code: 200, message: "Success", data: result});
             }
         }  
     })

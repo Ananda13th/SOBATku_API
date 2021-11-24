@@ -10,7 +10,7 @@ var Dokter = function(dokter) {
 }
 
 Dokter.get = function(result) {
-    dbConn.query("SELECT * FROM dokter d JOIN spesialisasi s ON d.id_spesialisasi = s.id_spesialisasi"+
+    dbConn.query("SELECT * FROM dokter d JOIN spesialisasi s ON d.kode_spesialisasi = s.kode_spesialisasi"+
         " ORDER BY d.nama_dokter ASC; ",
         function(err, res) {
             if(err) {
@@ -39,7 +39,7 @@ Dokter.search = function(kodeDokter, result) {
 
 
 Dokter.getBySpesialisasi = function(idSpesialisasi, result) {
-    dbConn.query("SELECT * FROM dokter d WHERE d.id_spesialisasi =? ORDER BY d.nama_dokter ASC", idSpesialisasi,
+    dbConn.query("SELECT * FROM dokter d WHERE d.kode_spesialisasi =? ORDER BY d.nama_dokter ASC", idSpesialisasi,
         function(err, res) {
             if(err) {
                 console.log("error: ", err);
@@ -52,7 +52,7 @@ Dokter.getBySpesialisasi = function(idSpesialisasi, result) {
 }
 
 Dokter.getFavorit = function(idUser, result) {
-    dbConn.query("SELECT * FROM dokter d JOIN spesialisasi s ON d.id_spesialisasi = s.id_spesialisasi"+
+    dbConn.query("SELECT * FROM dokter d JOIN spesialisasi s ON d.kode_spesialisasi = s.kode_spesialisasi"+
         " JOIN dokter_favorit df ON d.id_dokter = df.id_dokter"+
         " WHERE df.id_user = ?" +
         " ORDER BY d.nama_dokter ASC; ", idUser,

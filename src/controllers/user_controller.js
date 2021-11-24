@@ -1,4 +1,5 @@
 const {json} = require('body-parser');
+var admin = require("firebase-admin");
 const Log = require('../models/log');
 const User = require('../models/user');
 const Vonage = require('@vonage/server-sdk');
@@ -9,6 +10,9 @@ const vonage = new Vonage({
     apiKey: "9e0312e3",
     apiSecret: "YYoccYWtrKbK9m95"
   })
+
+
+const db = admin.firestore();
 
 exports.getUser = async function (req, res) {
     User.get(req.params.noHp, 
@@ -114,13 +118,14 @@ exports.updateUSer = async function (req, res) {
 }
 
 exports.updateUserAdmin = async function (req, res) {
-    User.updateAdmin(req.params.nama, req.params.noHp, req.params.id, req.params.email,
+    User.updateAdmin(req.body.nama_user, req.body.nomor_hp, req.body.id_user, req.body.email,
         function(err, result) {
             if(err) {
                 res.send("Error : ", err);  
                 var newNotif = new Log( {
                     nomor_rm    : "-",
-                    id_user     : req.params.id,
+                    id_user     : req.body.id_user,
+                    kode_dokter : "-",
                     keterangan  : "Update User",
                     perubahan   : "Update User Gagal"
                 })
@@ -129,9 +134,10 @@ exports.updateUserAdmin = async function (req, res) {
             else {   
                 var newNotif = new Log( {
                     nomor_rm    : "-",
-                    id_user     : req.params.id,
+                    id_user     : req.body.id_user,
+                    kode_dokter : "-",
                     keterangan  : "Update User",
-                    perubahan   : "Update User Berhasil, email : " + req.params.email + " password: " + req.params.password
+                    perubahan   : "Update User Berhasil : \nEmail : " + req.body.email + "\nNama : " + req.body.nama_user  + "\nHP : " + req.body.nomor_hp
                 })
                 Log.create(newNotif, function(error, result) {});
                 res.send({error_code: 200, message: "Success!", data:result});
@@ -172,31 +178,57 @@ exports.aktivasi = function async (req, res) {
     )
 }
 
-function sendMessage(nomorHp, newPassword) {
-    console.log(nomorHp);
-    const from = "RS Oen Solo"
-    const to = nomorHp
-    const text = 'Password Baru Anda : '+ newPassword 
-    vonage.message.sendSms(from, to, text, (err, responseData) => {
-        if (err) {
-            console.log(err);
-        } else {
-            if(responseData.messages[0]['status'] === "0") {
-                console.log("Message sent successfully.");
-            } else {
-                console.log(`Message failed with error: ${responseData.messages[0]['error-text']}`);
-            }
-        }
-    })
+exports.deleteFromFirebase = async function(req, res) {
+    await db.collection("user").doc(req.params.idUser).collection("pasien").get().then(querySnapshot => {
+        querySnapshot.docs.forEach(snapshot => {
+            snapshot.ref.delete();
+        });
+    });
 }
 
-function makeid(length) {
-    var result           = '';
-    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    var charactersLength = characters.length;
-    for ( var i = 0; i < length; i++ ) {
-      result += characters.charAt(Math.floor(Math.random() * charactersLength));
-   }
-   return result;
+
+exports.saveToFirebase = async function(req, res) {
+
+    if(req.body.fcmToken != null){
+
+        await db.collection("user").doc(req.body.idUser).set({
+            'createAt' :  new Date(),
+        });
+
+        db.collection('user').doc(req.body.idUser).collection('pasien')
+        .doc(req.body.namaPasien).set({
+            'token'    : req.body.fcmToken,
+            'no_rm'    : req.body.noRm,
+            'createAt' : new Date(),
+        }).then;
+    }
 }
+
+// function sendMessage(nomorHp, newPassword) {
+//     console.log(nomorHp);
+//     const from = "RS Oen Solo"
+//     const to = nomorHp
+//     const text = 'Password Baru Anda : '+ newPassword 
+//     vonage.message.sendSms(from, to, text, (err, responseData) => {
+//         if (err) {
+//             console.log(err);
+//         } else {
+//             if(responseData.messages[0]['status'] === "0") {
+//                 console.log("Message sent successfully.");
+//             } else {
+//                 console.log(`Message failed with error: ${responseData.messages[0]['error-text']}`);
+//             }
+//         }
+//     })
+// }
+
+// function makeid(length) {
+//     var result           = '';
+//     var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+//     var charactersLength = characters.length;
+//     for ( var i = 0; i < length; i++ ) {
+//       result += characters.charAt(Math.floor(Math.random() * charactersLength));
+//    }
+//    return result;
+// }
 

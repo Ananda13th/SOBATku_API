@@ -18,6 +18,7 @@ exports.createPendaftaran = async function(req, res) {
         }
     }
     try { 
+        //await axios.post('http://192.167.4.207:9696/pendaftaran/public/index.php/antrian', req.body, config)
         await axios.post('http://192.167.4.73/antrian/public/index.php/antrian', req.body, config)
         .then(function(response) {
             if(response.data.status == "100") {

@@ -34,7 +34,6 @@ User.getAll = function(result) {
                 console.log("error : ", err);
                 result(err, null);
             } else {
-                console.log(res);
                 result(null, res);
             }
         }
@@ -73,7 +72,7 @@ User.update = function(id, email, password, result) {
 
 User.updateAdmin = function(nama, noHp, id, email, result) {
     dbConn.query(
-        "UPDATE user SET nama_user=?, nomor_hp=?, email= ? WHERE id_user = ?", [nama, noHp, email,password,id], 
+        "UPDATE user SET nama_user=?, nomor_hp=?, email= ? WHERE id_user = ?", [nama, noHp, email, id], 
         function(err, res) {
             if(err) {
                 console.log("error: ", err);

@@ -7,10 +7,10 @@ const Pairing = require("../models/pairing");
 const e = require("express");
 
 
-admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-    databaseURL: "https://flutter-fcm-2cfd1-default-rtdb.asia-southeast1.firebasedatabase.app"
-});
+// admin.initializeApp({
+//     credential: admin.credential.cert(serviceAccount),
+//     databaseURL: "https://flutter-fcm-2cfd1-default-rtdb.asia-southeast1.firebasedatabase.app"
+// });
 
 const db = admin.firestore();
 
@@ -108,7 +108,7 @@ exports.notifikasiBebas = function async(req, res) {
         else
             result.forEach((pairing) => {
                 var data = JSON.parse(JSON.stringify(pairing))
-                sendCustomNotifFromFirebase(data, req.body.notifikasi);
+                sendCustomNotifFromFirebase(data, req.body);
             })
             res.send({error_code: 200, message: "Success"});
     })
@@ -124,11 +124,12 @@ function sendCustomNotifFromFirebase(data, notifikasi) {
                     var regkey = pasien.data().token;
                     var payload = {
                         notification: {
-                            title   : 'Notifikasi Pasien ' + pasien.id,
-                            body    : notifikasi,
+                            title   : notifikasi.judul,
+                            body    : "Untuk Saudara/i " + pasien.id + ", " +notifikasi.notifikasi,
                             sound   : "default"
                         }
                     };
+                    console.log(payload);
                     var opt = {
                         priority:"high",
                         timeToLive: 60*60*24
@@ -138,8 +139,8 @@ function sendCustomNotifFromFirebase(data, notifikasi) {
                         var newNotif = new Notifikasi( 
                             {
                                 id_user : data.id_user,
-                                judul   : 'Notifikasi Pasien',
-                                berita  : notifikasi,
+                                judul   : notifikasi.judul,
+                                berita  : "Untuk Saudara/i " + pasien.id + ", " +notifikasi.notifikasi,
                             }
                         )
                         Notifikasi.create(newNotif, function(error, result) {
