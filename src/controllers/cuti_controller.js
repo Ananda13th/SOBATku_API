@@ -37,7 +37,7 @@ exports.buatJadwalCuti = function async(req, res) {
         if(error)
             res.send(error);
         if(result.length == 0 )
-            res.json({error_code: 400, message: "Jadwal Tidak Ditemukan"});
+            res.json({error_code: 201, message: "Jadwal Tidak Ditemukan"});
         else {
             result.forEach(jadwal => {
                 var start = startDate.clone()
