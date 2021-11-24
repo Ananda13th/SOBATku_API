@@ -3,17 +3,23 @@ const Jadwal_Dokter = require('../models/jadwal_dokter');
 
 exports.getJadwalDokter = function(req, res) {
     var dataCollection = [];
+
     Jadwal_Dokter.getBySchedule(req.params.idSpesialisasi, req.params.hari, 
         function(error, jadwal) {
             if(error) {
                 res.json({error_code: 400, message: "Failed", data : []});
             }
-            jadwal.forEach((data) => {
-                var obj = JSON.parse(data.data);
-                obj.jadwal = JSON.parse(obj.jadwal);
-                dataCollection.push(obj);
-            })
-            res.json({error_code: 200, message: "Success", data : dataCollection})
+            if(jadwal == null ) {
+               console.log("Tidak Ada Jadwal");
+            }
+            else {
+                jadwal.forEach((data) => {
+                    var obj = JSON.parse(data.data);
+                    obj.jadwal = JSON.parse(obj.jadwal);
+                    dataCollection.push(obj);
+                })
+                res.json({error_code: 200, message: "Success", data : dataCollection})
+            }
         }
     );
 }
