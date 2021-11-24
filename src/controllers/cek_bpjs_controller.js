@@ -7,13 +7,14 @@ const user_key = "f8a3cfdfe2df67c7fdac993603794346"
 const axios = require('axios');
 var crypto = require('crypto');
 const { decompressFromEncodedURIComponent } = require('lz-string');
+const baseUrlBpjs = 'https://apijkn-dev.bpjs-kesehatan.go.id/vclaim-rest-dev/';
 
 
 exports.cekStatusBpjs = async function (req, res) {
     const timestamp = createTimestamp();
     const signature = createSignature(timestamp);
     const dateTime = new Date(new Date().setHours(new Date().getHours() + 7));
-   
+    
     var config = {
         headers : 
         {
@@ -26,7 +27,7 @@ exports.cekStatusBpjs = async function (req, res) {
     }
     
     try {
-        await axios.get('https://apijkn-dev.bpjs-kesehatan.go.id/vclaim-rest-dev/Peserta/nokartu/' + req.params.noBpjs +'/tglSEP/'+ dateTime.toISOString().substr(0,10), config)
+        await axios.get(baseUrlBpjs+'Peserta/nokartu/' + req.params.noBpjs +'/tglSEP/'+ dateTime.toISOString().substr(0,10), config)
         .then(function(response) {
             var kodeResponse = response.data.metaData.code;
             if(kodeResponse == "200") {
@@ -47,7 +48,6 @@ exports.cekStatusBpjs = async function (req, res) {
 exports.cekRujukanBpjs = async function (req, res) {
     const timestamp = createTimestamp();
     const signature = createSignature(timestamp);
-
     var config = {
         headers : 
         {
@@ -58,10 +58,9 @@ exports.cekRujukanBpjs = async function (req, res) {
             'Content-Type'  : 'application/json; charset=UTF-8',
         }
     }
-
     
     try {
-        await axios.get('https://apijkn-dev.bpjs-kesehatan.go.id/vclaim-rest-dev/Rujukan/Peserta/' + req.params.noBpjs, config)
+        await axios.get(baseUrlBpjs+'Rujukan/Peserta/' + req.params.noBpjs, config)
         .then(function(response) {
             var kodeResponse = response.data.metaData.code;
             if(kodeResponse == "200") {
@@ -80,7 +79,7 @@ exports.cekRujukanBpjs = async function (req, res) {
 }
 
 function createTimestamp() {
-    const dateNow =  Math.floor(new Date().getTime() / 1000);
+    const dateNow = Math.floor(new Date().getTime() / 1000);
     return dateNow.toString();
 }
 
