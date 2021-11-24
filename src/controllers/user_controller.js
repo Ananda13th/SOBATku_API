@@ -186,7 +186,6 @@ exports.deleteFromFirebase = async function(req, res) {
     });
 }
 
-
 exports.saveToFirebase = async function(req, res) {
 
     if(req.body.fcmToken != null){
