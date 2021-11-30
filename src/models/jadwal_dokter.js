@@ -18,7 +18,7 @@ JadwalDokter.getBySchedule = function(idSpesialisasi, hari, result) {
         " FROM dokter d"+
         " JOIN jadwal_dokter jd ON d.kode_dokter = jd.kode_dokter"+ 
         " WHERE d.kode_spesialisasi = ? AND jd.hari= ?" +
-        " GROUP BY d.kode_dokter, jd.hari;", [idSpesialisasi, hari],
+        " GROUP BY d.kode_dokter, jd.hari, d.nama_dokter;", [idSpesialisasi, hari],
         function(err, res) {
             if(err) {
                 result(err, null);
@@ -39,7 +39,7 @@ JadwalDokter.getById = function(kodeDokter, result) {
         " FROM dokter d"+
         " JOIN jadwal_dokter jd ON d.kode_dokter = jd.kode_dokter"+ 
         " WHERE d.kode_dokter = ?" +
-        " GROUP BY d.kode_dokter, jd.hari;", kodeDokter,
+        " GROUP BY d.kode_dokter, jd.hari, d.nama_dokter;", kodeDokter,
         function(err, res) {
             if(err) {
                 console.log(err);
