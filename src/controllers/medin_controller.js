@@ -155,18 +155,18 @@ exports.deleteAntrian = function async(req, res) {
                 var newNotif = new Log({
                     nomor_rm    : response.mr,
                     id_user     : "Dari RS",
-                    kode_dokter : response.kode_jadwal.substr(0,6),
+                    kode_dokter : response.kodejadwal.substring(0,5),
                     keterangan  : "Hapus Pendaftaran",
                     perubahan   : "Gagal Hapus Pendaftaran, " + error
                 })
                 Log.create(newNotif, function(error, result) {});
                 res.send({error_code : 500, message : "Internal Server Error"});
             }
-            if(result.length == 0) {
+            if(result.affectedRows == 0) {
                 var newNotif = new Log({
                     nomor_rm    : response.mr,
                     id_user     : "Dari RS",
-                    kode_dokter : response.kode_jadwal.substr(0,6),
+                    kode_dokter : response.kodejadwal.substring(0,5),
                     keterangan  : "Hapus Pendaftaran",
                     perubahan   : "Gagal Hapus Pendaftaran, Antrian atau Nomor Rekam Medis Tidak Ditemukan : " + "\nKode Jadwal : " + response.kodejadwal + "\nRekam Medis : " + response.mr
                 })
@@ -178,7 +178,7 @@ exports.deleteAntrian = function async(req, res) {
                 var newNotif = new Log({
                     nomor_rm    : response.mr,
                     id_user     : "Dari RS",
-                    kode_dokter : response.kode_jadwal.substr(0,6),
+                    kode_dokter : response.kodejadwal.substring(0,5),
                     keterangan  : "Hapus Pendaftaran",
                     perubahan   : "Hapus Pendaftaran : " + "\nKode Jadwal : " + response.kodejadwal + "\nRekam Medis : " + response.mr
                 })

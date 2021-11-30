@@ -29,8 +29,9 @@ exports.addBanner = function async(req, res) {
 
     Banner.add(req.body, function(error, result) {
         if(error)
-        res.send(error);
-    res.json({error_code: 200, message: "Success"});
+            res.send(error);
+        else
+            res.json({error_code: 200, message: "Success"});
     })
 }
 

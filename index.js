@@ -2,16 +2,14 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors')
 const {json} = require('body-parser');
-var serviceAccount = require("./flutter-fcm-2cfd1-firebase-adminsdk-zy4vc-62e802105e.json");
+var serviceAccount = require("./sobatku-59e37-firebase-adminsdk-7swhs-f3178a41ac.json");
 var admin = require("firebase-admin");
 const port = process.env.PORT || 3001;
 const app = express();
 
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
-    databaseURL: "https://flutter-fcm-2cfd1-default-rtdb.asia-southeast1.firebasedatabase.app"
 });
-
 
 app.listen(port, () => {
     console.log(`Server is listening on port ${port}`);

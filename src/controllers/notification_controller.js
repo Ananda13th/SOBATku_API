@@ -1,16 +1,8 @@
-var serviceAccount = require("../../flutter-fcm-2cfd1-firebase-adminsdk-zy4vc-62e802105e.json");
-var admin = require("firebase-admin");
+const admin = require("firebase-admin");
 const {json} = require('body-parser');
 const PendaftaranResp = require('../models/pendaftaranResp');
 const Notifikasi = require("../models/notifikasi");
 const Pairing = require("../models/pairing");
-const e = require("express");
-
-
-// admin.initializeApp({
-//     credential: admin.credential.cert(serviceAccount),
-//     databaseURL: "https://flutter-fcm-2cfd1-default-rtdb.asia-southeast1.firebasedatabase.app"
-// });
 
 const db = admin.firestore();
 
@@ -23,28 +15,37 @@ exports.getNotificationList = function async(req, res) {
 }
 
 exports.sendNotification = function async(kodeJadwal, antrian, res) {
+    /* CARI DATA PENDAFTARAN DARI KODEJADWAL YANG DIKIRIMKAN DARI RS*/
     PendaftaranResp.search(kodeJadwal, function(error, result) {
         if(error) {
             console.log("Error : ", error);
         }
         else {
-           result.forEach( value => {
+            /* LAKUKAN ITERASI PADA SETIAP HASIL PENCARIAN*/
+            result.forEach( dataPendaftaran => {
                try {
-                   if(value.id_user == "Dari RS") {
-                        Pairing.search(value.nomor_rm, function(error, result) {
+                   if(dataPendaftaran.id_user == "Dari RS") {
+                       /* BILA PENDAFTARAN DARI RS, AKAN DICARI DATA USER DAN PASIEN PADA TABEL PAIRING
+                          DARI NOMOR RM YANG ADA PADA DATA PENDAFTARAN
+                       */
+                        Pairing.search(dataPendaftaran.nomor_rm, function(error, result) {
                             if(error)
                                 res.send(error);
                             if(result.length == 0)
-                                console.log("Pasien Tidak Ada Di App Database App Sobatku");
+                                console.log("Pasien Tidak Ada Di Database App Sobatku");
                             else
+                                /* SETIAP PAIRING YANG DITEMUKAN AKAN DIKIRIM UNTUK NOTIFIKASI 
+                                   HASIL BALIKAN PAIRING BERUPA NOMOR RM DAN ID USER
+                                */
                                 result.forEach((pairing) => {
-                                    var data = JSON.parse(JSON.stringify(pairing));
-                                    sendNotifFromFirebase(antrian, data, value, value.antrian);
+                                    var dataPairing = JSON.parse(JSON.stringify(pairing));
+                                    sendNotifFromFirebase(antrian, dataPairing, dataPendaftaran, dataPendaftaran.antrian);
                                 })
                         })
                     } 
                    else {
-                        sendNotifFromFirebase(antrian, value, value, value.antrian);
+                        /* BILA PENDAFTARAN DARI APLIKASI, DATA TRANSAKSI DAN ID USER SUDAH TERSEDIA */
+                        sendNotifFromFirebase(antrian, dataPendaftaran, dataPendaftaran, dataPendaftaran.antrian);
                    }
                }
                catch (error) {
@@ -58,12 +59,18 @@ exports.sendNotification = function async(kodeJadwal, antrian, res) {
 function sendNotifFromFirebase(antrianBerjalan, data, dataTransaksi, antrian) {
     var counter = antrian-antrianBerjalan;
     if(counter == 10 || counter <=5 || antrianBerjalan == 1 && counter > 0) {
+        /* MENGAMBIL SEMUA DATA PASIEN DARI ID USER */
          db.collection('user').doc(data.id_user.toString()).collection('pasien').get()
         .then(
             snapshot => {
                 snapshot.forEach( (pasien) => {
+                    /* MELAKUKAN PENGECEKAN APAKAH PASIEN MEMILIKI NOMOR RM 
+                       YANG SAMA DENGAN DATA YANG DIKIRIM
+                    */
                     if(pasien.data().no_rm == data.nomor_rm) {
+                        /* MENGAMBIL DEVICE TOKEN YANG DISIMPAN PADA FIRESTORE */
                         var regkey = pasien.data().token;
+                        /* BUAT ISI NOTIFIKASI */
                         var payload = {
                             notification: {
                                 title   : 'Antrian ' + dataTransaksi.dokter,
@@ -77,6 +84,9 @@ function sendNotifFromFirebase(antrianBerjalan, data, dataTransaksi, antrian) {
                         }
                         admin.messaging().sendToDevice(regkey, payload, opt)
                         .then(function(response) {
+                           
+                            if(response.results[0].error != null)
+                                console.log(response.results[0].error);
                             var newNotif = new Notifikasi( 
                                 {
                                     id_user : pasien.ref.parent.parent.id,
@@ -89,7 +99,6 @@ function sendNotifFromFirebase(antrianBerjalan, data, dataTransaksi, antrian) {
                                     console.log(error);
                                 }
                             });
-                            console.log("Berhasil");
                         }).catch(function(error) {
                             console.log("Error: ", error);
                         });

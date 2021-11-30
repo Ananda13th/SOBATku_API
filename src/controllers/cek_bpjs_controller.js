@@ -7,6 +7,7 @@ const user_key = "f8a3cfdfe2df67c7fdac993603794346"
 const axios = require('axios');
 var crypto = require('crypto');
 const { decompressFromEncodedURIComponent } = require('lz-string');
+ // URL BPJS VER2 PENGEMBANGAN
 const baseUrlBpjs = 'https://apijkn-dev.bpjs-kesehatan.go.id/vclaim-rest-dev/';
 
 
@@ -25,7 +26,11 @@ exports.cekStatusBpjs = async function (req, res) {
             'Content-Type'  : 'application/json; charset=UTF-8',
         }
     }
+
+    /*** BYPASS AGAR BISA DAFTAR PASIEN SELAMA BPJS VER2 MASIH PENGEMBANGAN ***/
+    // res.json({error_code : "200", data: "aktif"});
     
+    /*** FUNGSI BILA BPJS VER2 SUDAH LIVE ***/
     try {
         await axios.get(baseUrlBpjs+'Peserta/nokartu/' + req.params.noBpjs +'/tglSEP/'+ dateTime.toISOString().substr(0,10), config)
         .then(function(response) {
@@ -42,7 +47,6 @@ exports.cekStatusBpjs = async function (req, res) {
     } catch (err) {
         res.send(err);
     }
-
 }
 
 exports.cekRujukanBpjs = async function (req, res) {
@@ -58,23 +62,27 @@ exports.cekRujukanBpjs = async function (req, res) {
             'Content-Type'  : 'application/json; charset=UTF-8',
         }
     }
-    
-    try {
-        await axios.get(baseUrlBpjs+'Rujukan/Peserta/' + req.params.noBpjs, config)
-        .then(function(response) {
-            var kodeResponse = response.data.metaData.code;
-            if(kodeResponse == "200") {
-                var decompressedResponse = decryptResponse(timestamp, response.data.response);  
-                res.send(decompressedResponse);
-            }
-            else if(kodeResponse != "200") {
-                res.send({error_code :response.data.metaData.code, message : response.data.metaData.message});
-            }
-        });
 
-    } catch (err) {
-        res.send(err);
-    }
+    /*** BYPASS AGAR BISA DAFTAR POLI RUJUKAN SELAMA BPJS VER2 MASIH PENGEMBANGAN ***/
+    res.json({error_code : "200", data: "aktif"});
+    
+    /*** FUNGSI BILA BPJS VER2 SUDAH LIVE ***/
+    // try {
+    //     await axios.get(baseUrlBpjs+'Rujukan/Peserta/' + req.params.noBpjs, config)
+    //     .then(function(response) {
+    //         var kodeResponse = response.data.metaData.code;
+    //         if(kodeResponse == "200") {
+    //             var decompressedResponse = decryptResponse(timestamp, response.data.response);  
+    //             res.send({error_code: "200", data: decompressedResponse});
+    //         }
+    //         else if(kodeResponse != "200") {
+    //             res.send({error_code :response.data.metaData.code, message : response.data.metaData.message});
+    //         }
+    //     });
+
+    // } catch (err) {
+    //     res.send(err);
+    // }
 
 }
 

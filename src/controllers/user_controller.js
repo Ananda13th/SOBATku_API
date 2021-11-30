@@ -179,20 +179,11 @@ exports.aktivasi = function async (req, res) {
 }
 
 exports.deleteFromFirebase = async function(req, res) {
-    await db.collection("user").doc(req.params.idUser).collection("pasien").get().then(querySnapshot => {
-        querySnapshot.docs.forEach(snapshot => {
-            snapshot.ref.delete();
-        });
-    });
+    await db.collection("user").doc(req.params.idUser).collection("pasien").doc(req.params.namaPasien).delete();
 }
 
 exports.saveToFirebase = async function(req, res) {
-
     if(req.body.fcmToken != null){
-
-        await db.collection("user").doc(req.body.idUser).set({
-            'createAt' :  new Date(),
-        });
 
         db.collection('user').doc(req.body.idUser).collection('pasien')
         .doc(req.body.namaPasien).set({
@@ -200,9 +191,16 @@ exports.saveToFirebase = async function(req, res) {
             'no_rm'    : req.body.noRm,
             'createAt' : new Date(),
         }).then;
+
+        await db.collection("user").doc(req.body.idUser).set({
+            'createAt' :  new Date(),
+        });
+
+        
     }
 }
 
+/* FUNGSI MENGIRIM KODE RANDOM KE USER SEBAGAI PASSWORD BARU */
 // function sendMessage(nomorHp, newPassword) {
 //     console.log(nomorHp);
 //     const from = "RS Oen Solo"
@@ -221,6 +219,7 @@ exports.saveToFirebase = async function(req, res) {
 //     })
 // }
 
+/* FUNGSI MEMBUAT RANDOM KARAKTER */
 // function makeid(length) {
 //     var result           = '';
 //     var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
