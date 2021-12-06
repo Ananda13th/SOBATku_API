@@ -118,7 +118,7 @@ User.createOtp = function(nomorHp, kodeOtp, result) {
 
 User.verify = function(nomorHp, kodeOtp, result) {
     dbConn.query(
-        "Update user u SET u.aktif='1' WHERE u.id_user = (SELECT u.id_user FROM user u JOIN daftar_otp d ON u.nomor_hp = d.nomor_hp WHERE d.nomor_hp= ? AND d.kode_otp= ?)", [nomorHp, kodeOtp], 
+        "Update user u SET u.aktif='1' WHERE u.nomor_hp = (SELECT d.nomor_hp FROM daftar_otp d WHERE d.nomor_hp= ? AND d.kode_otp= ?)", [nomorHp, kodeOtp], 
         function(err, res) {
             if(err) {
                 console.log("error: ", err);
