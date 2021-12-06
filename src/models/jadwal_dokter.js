@@ -13,12 +13,13 @@ JadwalDokter.getBySchedule = function(idSpesialisasi, hari, result) {
         "SELECT JSON_OBJECT("+
         "'nama', d.nama_dokter,"+ 
         "'kode_dokter', d.kode_dokter," +
+        "'foto', d.foto," + 
         "'hari', jd.hari,"+ 
         "'jadwal', CONCAT('[', GROUP_CONCAT(JSON_OBJECT( 'jam', jd.jam, 'aktif', jd.aktif, 'id', jd.id_jadwal) ) ,']')) AS data"+ 
         " FROM dokter d"+
         " JOIN jadwal_dokter jd ON d.kode_dokter = jd.kode_dokter"+ 
         " WHERE d.kode_spesialisasi = ? AND jd.hari= ?" +
-        " GROUP BY d.kode_dokter, jd.hari, d.nama_dokter;", [idSpesialisasi, hari],
+        " GROUP BY d.kode_dokter, jd.hari, d.nama_dokter, d.foto;", [idSpesialisasi, hari],
         function(err, res) {
             if(err) {
                 result(err, null);
@@ -34,12 +35,13 @@ JadwalDokter.getById = function(kodeDokter, result) {
         "SELECT JSON_OBJECT("+
         "'nama', d.nama_dokter,"+ 
         "'kode_dokter', d.kode_dokter," +
+        "'foto', d.foto," + 
         "'hari', jd.hari,"+ 
         "'jadwal', CONCAT('[', GROUP_CONCAT(JSON_OBJECT( 'jam', jd.jam, 'aktif', jd.aktif, 'id', jd.id_jadwal) ) ,']')) AS data"+ 
         " FROM dokter d"+
         " JOIN jadwal_dokter jd ON d.kode_dokter = jd.kode_dokter"+ 
         " WHERE d.kode_dokter = ?" +
-        " GROUP BY d.kode_dokter, jd.hari, d.nama_dokter;", kodeDokter,
+        " GROUP BY d.kode_dokter, jd.hari, d.nama_dokter, d.foto;", kodeDokter,
         function(err, res) {
             if(err) {
                 console.log(err);
@@ -50,53 +52,5 @@ JadwalDokter.getById = function(kodeDokter, result) {
         }
     )
 }
-
-
-// JadwalDokter.getBySchedule = function(idSpesialisasi, hari, result) {
-//     dbConn.query(
-//         "SELECT JSON_OBJECT("+
-//         "'nama', d.nama_dokter,"+ 
-//         "'kode_dokter', d.kode_dokter," +
-//         "'hari', j.hari,"+ 
-//         "'aktif', jd.aktif, " +
-//         "'jadwal', CONCAT('[', GROUP_CONCAT(JSON_OBJECT( 'jam', j.jam, 'id', jd.kode_jadwal, 'aktif', jd.aktif) ) ,']')) AS data"+ 
-//         " FROM dokter d"+
-//         " JOIN jadwal_dokter jd ON d.kode_dokter = jd.kode_dokter"+ 
-//         " JOIN jadwal j ON jd.id_jadwal = j.id_jadwal" +
-//         " WHERE d.kode_spesialisasi = ? AND j.hari= ?" +
-//         " GROUP BY d.kode_dokter, j.hari;", [idSpesialisasi, hari],
-//         function(err, res) {
-//             if(err) {
-//                 result(err, null);
-//             } else {
-//                 result(null, res);
-//             }
-//         }
-//     )
-// }
-
-
-// JadwalDokter.getById = function(kodeDokter, result) {
-//     dbConn.query(
-//         "SELECT JSON_OBJECT("+
-//         "'nama', d.nama_dokter,"+ 
-//         "'kode_dokter', d.kode_dokter," +
-//         "'hari', j.hari,"+ 
-//         "'jadwal', CONCAT('[', GROUP_CONCAT(JSON_OBJECT( 'jam', j.jam, 'id', jd.kode_jadwal) ) ,']')) AS data"+ 
-//         " FROM dokter d"+
-//         " JOIN jadwal_dokter jd ON d.kode_dokter = jd.kode_dokter"+ 
-//         " JOIN jadwal j ON jd.id_jadwal = j.id_jadwal" +
-//         " WHERE d.kode_dokter = ?" +
-//         " GROUP BY d.kode_dokter, j.hari;", kodeDokter,
-//         function(err, res) {
-//             if(err) {
-//                 console.log(err);
-//                 result(err, null);
-//             } else {
-//                 result(null, res);
-//             }
-//         }
-//     )
-// }
 
 module.exports = JadwalDokter;
