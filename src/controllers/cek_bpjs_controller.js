@@ -64,25 +64,25 @@ exports.cekRujukanBpjs = async function (req, res) {
     }
 
     /*** BYPASS AGAR BISA DAFTAR POLI RUJUKAN SELAMA BPJS VER2 MASIH PENGEMBANGAN ***/
-    res.json({error_code : "200", data: "aktif"});
+    // res.json({error_code : "200", data: "aktif"});
     
     /*** FUNGSI BILA BPJS VER2 SUDAH LIVE ***/
-    // try {
-    //     await axios.get(baseUrlBpjs+'Rujukan/Peserta/' + req.params.noBpjs, config)
-    //     .then(function(response) {
-    //         var kodeResponse = response.data.metaData.code;
-    //         if(kodeResponse == "200") {
-    //             var decompressedResponse = decryptResponse(timestamp, response.data.response);  
-    //             res.send({error_code: "200", data: decompressedResponse});
-    //         }
-    //         else if(kodeResponse != "200") {
-    //             res.send({error_code :response.data.metaData.code, message : response.data.metaData.message});
-    //         }
-    //     });
+    try {
+        await axios.get(baseUrlBpjs+'Rujukan/Peserta/' + req.params.noBpjs, config)
+        .then(function(response) {
+            var kodeResponse = response.data.metaData.code;
+            if(kodeResponse == "200") {
+                var decompressedResponse = decryptResponse(timestamp, response.data.response);  
+                res.send({error_code: "200", data: decompressedResponse});
+            }
+            else if(kodeResponse != "200") {
+                res.send({error_code :response.data.metaData.code, message : response.data.metaData.message});
+            }
+        });
 
-    // } catch (err) {
-    //     res.send(err);
-    // }
+    } catch (err) {
+        res.send(err);
+    }
 
 }
 
