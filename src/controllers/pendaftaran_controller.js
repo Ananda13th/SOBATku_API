@@ -1,4 +1,5 @@
 const {json} = require('body-parser');
+const e = require('express');
 const { response } = require('express');
 const Log = require('../models/log');
 const PendaftaranResp = require('../models/pendaftaranResp');
@@ -18,9 +19,12 @@ exports.createPendaftaran = async function(req, res) {
         }
     }
     try { 
+        /* LIVE */
         //await axios.post('http://192.167.4.207:9696/pendaftaran/public/index.php/antrian', req.body, config)
-        await axios.post('http://192.167.4.73/antrian/public/index.php/antrian', req.body, config)
+        /* DEV */
+        await axios.post('192.167.4.73/antrian/public/index.php/antrian', req.body, config)
         .then(function(response) {
+            console.log(response);
             if(response.data.status == "100") {
                 PendaftaranResp.create(response.data, req.params.idUser, req.body.kodejadwal, req.body.str,
                     function(error, result) {
@@ -63,15 +67,21 @@ exports.createPendaftaran = async function(req, res) {
     }
     catch (err) {
         console.log(err);
-        var newNotif = new Log({
-                nomor_rm    : req.body.rm,
-                id_user     : req.params.idUser,
-                kode_dokter : req.body.str,
-                keterangan  : "Pendaftaran Poli",
-                perubahan   : "Pendaftaran Gagal : "+ err.response.data.message,
-            })
-        Log.create(newNotif, function(error, result) {});
-        res.send({message: err.response.data.message});
+        if(err.code === 'ETIMEDOUT') {
+            res.send({error_code: 500, message: err.code + ", Harap Hubungi IT Rumah Sakit"});
+        
+            var newNotif = new Log({
+                    nomor_rm    : req.body.rm,
+                    id_user     : req.params.idUser,
+                    kode_dokter : req.body.str,
+                    keterangan  : "Pendaftaran Poli",
+                    perubahan   : "Pendaftaran Gagal : "+ err.code,
+                })
+            Log.create(newNotif, function(error, result) {});
+        }
+        else {
+            res.send({error_code: 500, message: "Internal Server Error, Harap Hubungi IT Rumah Sakit"});
+        }
     }
 }
 
