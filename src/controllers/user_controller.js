@@ -98,6 +98,7 @@ exports.updateUSer = async function (req, res) {
                 var newNotif = new Log( {
                     nomor_rm    : "-",
                     id_user     : req.params.id,
+                    kode_dokter : "-",
                     keterangan  : "Update User",
                     perubahan   : "Update User Gagal"
                 })
@@ -107,6 +108,7 @@ exports.updateUSer = async function (req, res) {
                 var newNotif = new Log( {
                     nomor_rm    : "-",
                     id_user     : req.params.id,
+                    kode_dokter : "-",
                     keterangan  : "Update User",
                     perubahan   : "Update User Berhasil, email : " + req.params.email + " password: " + req.params.password
                 })
@@ -199,34 +201,3 @@ exports.saveToFirebase = async function(req, res) {
         
     }
 }
-
-/* FUNGSI MENGIRIM KODE RANDOM KE USER SEBAGAI PASSWORD BARU */
-// function sendMessage(nomorHp, newPassword) {
-//     console.log(nomorHp);
-//     const from = "RS Oen Solo"
-//     const to = nomorHp
-//     const text = 'Password Baru Anda : '+ newPassword 
-//     vonage.message.sendSms(from, to, text, (err, responseData) => {
-//         if (err) {
-//             console.log(err);
-//         } else {
-//             if(responseData.messages[0]['status'] === "0") {
-//                 console.log("Message sent successfully.");
-//             } else {
-//                 console.log(`Message failed with error: ${responseData.messages[0]['error-text']}`);
-//             }
-//         }
-//     })
-// }
-
-/* FUNGSI MEMBUAT RANDOM KARAKTER */
-// function makeid(length) {
-//     var result           = '';
-//     var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-//     var charactersLength = characters.length;
-//     for ( var i = 0; i < length; i++ ) {
-//       result += characters.charAt(Math.floor(Math.random() * charactersLength));
-//    }
-//    return result;
-// }
-
