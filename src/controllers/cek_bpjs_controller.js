@@ -34,13 +34,22 @@ exports.cekStatusBpjs = async function (req, res) {
     try {
         await axios.get(baseUrlBpjs+'Peserta/nokartu/' + req.params.noBpjs +'/tglSEP/'+ dateTime.toISOString().substr(0,10), config)
         .then(function(response) {
-            var kodeResponse = response.data.metaData.code;
-            if(kodeResponse == "200") {
-                var decompressedResponse = decryptResponse(timestamp, response.data.response);  
-                res.json({error_code : "200", data: decompressedResponse.peserta.statusPeserta.keterangan});
-            }
-            else if(kodeResponse != "200") {
-                res.send({error_code :response.data.metaData.code, message : response.data.metaData.message});
+            if(response.status == "500")
+                res.send({error_code :response.data.metaData.code, message : "Terjadi Kendala di Server BPJS, Harap Coba Lagi Nanti"});
+            else {
+                if(response.data.metaData.code == "200") {
+                    console.log(kodeResponse);
+                    var decompressedResponse = decryptResponse(timestamp, response.data.response);  
+                    res.json({error_code : "200", data: decompressedResponse.peserta.statusPeserta.keterangan});
+                }
+                else if(response.data.metaData.code == "201") {
+                    console.log(kodeResponse);
+                    res.send({error_code :response.data.metaData.code, message : "Nomor BPJS " + response.data.metaData.message});
+                }
+                else {
+                    console.log(response);
+                    res.send({error_code :response.data.metaData.code, message : "Terjadi Kendala di Server BPJS, Harap Coba Lagi Nanti"});
+                }
             }
         });
 
@@ -70,13 +79,19 @@ exports.cekRujukanBpjs = async function (req, res) {
     try {
         await axios.get(baseUrlBpjs+'Rujukan/Peserta/' + req.params.noBpjs, config)
         .then(function(response) {
-            var kodeResponse = response.data.metaData.code;
-            if(kodeResponse == "200") {
-                var decompressedResponse = decryptResponse(timestamp, response.data.response);  
-                res.send({error_code: "200", data: decompressedResponse});
-            }
-            else if(kodeResponse != "200") {
-                res.send({error_code :response.data.metaData.code, message : response.data.metaData.message});
+            if(response.status == "500")
+                res.send({error_code :response.data.metaData.code, message : "Terjadi Kendala di Server BPJS, Harap Coba Lagi Nanti"});
+            else {
+                if(response.data.metaData.code == "200") {
+                    var decompressedResponse = decryptResponse(timestamp, response.data.response);  
+                    res.send({error_code: "200", data: decompressedResponse});
+                }
+                else if(response.data.metaData.code == "201") {
+                    res.send({error_code :response.data.metaData.code, message : response.data.metaData.message});
+                }
+                else {
+                    res.send({error_code :response.data.metaData.code, message : "Terjadi Kendala di Server BPJS, Harap Coba Lagi Nanti"});
+                }
             }
         });
 
