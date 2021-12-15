@@ -32,13 +32,15 @@ exports.getJadwalDokterById = function(req, res) {
                 res.json({error_code: 400, message: "Failed", data : []});
                 res.send(error);
             }
-            var obj = JSON.parse(JSON.stringify(result));
-            obj.forEach(element => {
-                var object = JSON.parse(element.data);
-                object.jadwal = JSON.parse(object.jadwal);
-                dataCollection.push(object);
-            });
-            res.json({error_code: 200, message: "Success", data : dataCollection});
+            else {
+                var obj = JSON.parse(JSON.stringify(result));
+                obj.forEach(element => {
+                    var object = JSON.parse(element.data);
+                    object.jadwal = JSON.parse(object.jadwal);
+                    dataCollection.push(object);
+                });
+                res.json({error_code: 200, message: "Success", data : dataCollection});
+            }
         }
     );
 }

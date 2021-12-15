@@ -8,7 +8,8 @@ exports.getDokter = function(req, res) {
                 res.json({error_code: 400, message: "Failed", data : []});
                 res.send(error);
             }
-            res.json({error_code: 200, message: "Success", data : result});
+            else
+                res.json({error_code: 200, message: "Success", data : result});
         })
 }
 
@@ -19,7 +20,8 @@ exports.getDokterBySpesialisasi = function(req, res) {
                 res.json({error_code: 400, message: "Failed", data : []});
                 res.send(error);
             }
-            res.json({error_code: 200, message: "Success", data : result});
+            else
+                res.json({error_code: 200, message: "Success", data : result});
         }
     )
 }

@@ -5,9 +5,12 @@ const Log = require('../models/log');
 
 exports.getPasien = function(req, res) {
     Pasien.get(req.params.idUser, function(error, pasien) {
-        if(error)
+        if(error) {
+            console.log(error);
             res.send(error);
-        res.json({error_code: 200, message: "Success", data : pasien})
+        }
+        else
+            res.json({error_code: 200, message: "Success", data : pasien})
     });
 }
 
@@ -60,7 +63,7 @@ exports.updateBpjs = function async(req, res) {
             if(error)
                 res.send("Error : ", error);
             else
-            res.send({error_code: 200, message: "Success"});
+                res.send({error_code: 200, message: "Success"});
         }
     );
 }

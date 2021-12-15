@@ -6,7 +6,8 @@ exports.addDokterFavorit = function(req, res) {
             if(error) {
                 res.json({error_code: 500, message: "Internal Server Error", data : []});
             }
-            res.json({error_code: 200, message: "Success", data : result});
+            else
+                res.json({error_code: 200, message: "Success", data : result});
         }
     )
 }
@@ -17,7 +18,8 @@ exports.getDokterFavorit = function(req, res) {
             if(error) {
                 res.json({error_code: 500, message: "Internal Server Error", data : []});
             }
-            res.json({error_code: 200, message: "Success", data : result});
+            else
+                res.json({error_code: 200, message: "Success", data : result});
         })
 }
 
@@ -27,7 +29,8 @@ exports.deleteFavorit = function(req, res) {
             if(error) {
                 res.json({error_code: 500, message: "Internal Server Error"});
             }
-            res.json({error_code: 200, message: "Success"});
+            else
+                res.json({error_code: 200, message: "Success"});
         }
     )
 }

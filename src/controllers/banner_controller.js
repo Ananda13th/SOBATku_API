@@ -4,9 +4,12 @@ const moment = require('moment');
 
 exports.getBanner = function async(req, res) {
     Banner.get(function(error, result) {
-        if(error)
+        if(error) {
+            console.log(error);
             res.send(error);
-        res.json({error_code: 200, message: "Success", data : result});
+        }
+        else
+            res.json({error_code: 200, message: "Success", data : result});
     })
 }
 
@@ -14,7 +17,8 @@ exports.getBannerNoFormat = function async(req, res) {
     Banner.getWithoutFormat(function(error, result) {
         if(error)
             res.send(error);
-        res.json({error_code: 200, message: "Success", data : result});
+        else
+            res.json({error_code: 200, message: "Success", data : result});
     })
 }
 

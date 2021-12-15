@@ -5,6 +5,7 @@ exports.getJam = function(req, res) {
     Jadwal.getJam(function(err, result) {
         if(err)
             res.send(err);
-        res.json({error_code: 200, message: "Success", data : result});
+        else
+            res.json({error_code: 200, message: "Success", data : result});
     });
 }
