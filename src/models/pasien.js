@@ -52,9 +52,10 @@ Pasien.update = function(noBpjsBaru, nomorRm, result) {
 }
 
 Pasien.search = function(noRm, namaBelakang, result) {
-    namaBelakang = "%"+namaBelakang;
+    namaBelakang = "%"+namaBelakang+"%";
     dbConn.query("SELECT * FROM pasien WHERE nomor_rm = ? AND nama_pasien LIKE ? LIMIT 1", [noRm, namaBelakang],
         function(err, res) {
+            console.log(res);
             if(err) {
                 console.log("error: ", err);
                 result(err, null);
