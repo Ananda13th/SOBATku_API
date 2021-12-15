@@ -100,7 +100,7 @@ exports.editPasien = function async (req, res) {
                     res.send({error_code : 200, message : "Sukses"});
                 }
                 else if(result != null) {
-                    Pasien.updateFromMedin(response, 
+                    Pasien.updateFromRs(response, 
                         function(error, result) {
                             if(error) {
                                 console.log(error)
