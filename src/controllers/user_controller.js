@@ -22,14 +22,14 @@ exports.getUser = async function (req, res) {
             else {
                 //Bila Nomer HP Tidak Ditemukan
                 if(result.length == 0)
-                    res.send({error_code: 400, message: "Success!", data: []});
+                    res.send({error_code: 201, message: "Data Tidak Ditemukan", data: []});
                 else {
                     const validPassword = await bcrypt.compare(req.params.password, result[0].password);
                     if(validPassword)
                         res.send({error_code: 200, message: "Success!", data: result});
                     else
                           //Bila Nomer HP Ditemukan Tapi Password Salah
-                        res.send({error_code: 400, message: "Success!", data: []});
+                        res.send({error_code: 201, message: "Data Tidak Ditemukan", data: []});
                 }
             }
         }
@@ -44,7 +44,7 @@ exports.getAllUser = async function (req, res) {
             else {
                 //Bila Nomer HP Tidak Ditemukan
                 if(result.length == 0)
-                    res.send({error_code: 400, message: "Success!", data: []});
+                    res.send({error_code: 201, message: "Data Tidak Ditemukan", data: []});
                 else {
                     res.send({error_code: 200, message: "Success!", data: result});
                 }
