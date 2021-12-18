@@ -85,7 +85,7 @@ Pasien.searchForEdit = function(request, result) {
     )
 }
 
-Pasien.updateFromMedin = function(request, result) {
+Pasien.updateFromRs = function(request, result) {
     dbConn.query("UPDATE pasien SET nama_pasien = ? WHERE nomor_rm = ? ", [request.name, request.new_mr],
     function(err,res) {
         if(err) {
