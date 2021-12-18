@@ -35,21 +35,22 @@ exports.cekStatusBpjs = async function (req, res) {
         await axios.get(baseUrlBpjs+'Peserta/nokartu/' + req.params.noBpjs +'/tglSEP/'+ dateTime.toISOString().substr(0,10), config)
         .then(function(response) {
             if(response.status == "500")
-                res.send({error_code :response.data.metaData.code, message : "Terjadi Kendala di Server BPJS, Harap Coba Lagi Nanti"});
-            else {
+                res.send({error_code :response.data.metaData.code, message : "Terjadi Kesalahan Saat Koneksi ke Server BPJS, Harap Coba Lagi Nanti"});
+            else if(response.status == "200"){
                 if(response.data.metaData.code == "200") {
-                    console.log(kodeResponse);
                     var decompressedResponse = decryptResponse(timestamp, response.data.response);  
                     res.json({error_code : "200", data: decompressedResponse.peserta.statusPeserta.keterangan});
                 }
                 else if(response.data.metaData.code == "201") {
-                    console.log(kodeResponse);
                     res.send({error_code :response.data.metaData.code, message : "Nomor BPJS " + response.data.metaData.message});
                 }
                 else {
                     console.log(response);
-                    res.send({error_code :response.data.metaData.code, message : "Terjadi Kendala di Server BPJS, Harap Coba Lagi Nanti"});
+                    res.send({error_code :response.data.metaData.code, message : "Terjadi Kesalahan Saat Koneksi ke Server BPJS, Harap Coba Lagi Nanti"});
                 }
+            }
+            else {
+                res.send({error_code :response.status, message : response.error});
             }
         });
 
@@ -81,10 +82,10 @@ exports.cekRujukanBpjs = async function (req, res) {
         .then(function(response) {
             if(response.status == "500")
                 res.send({error_code :response.data.metaData.code, message : "Terjadi Kendala di Server BPJS, Harap Coba Lagi Nanti"});
-            else {
+            else if(response.status == "200"){
                 if(response.data.metaData.code == "200") {
                     var decompressedResponse = decryptResponse(timestamp, response.data.response);  
-                    res.send({error_code: "200", data: decompressedResponse});
+                    res.send({error_code: response.data.metaData.code, data: decompressedResponse});
                 }
                 else if(response.data.metaData.code == "201") {
                     res.send({error_code :response.data.metaData.code, message : response.data.metaData.message});
@@ -92,6 +93,9 @@ exports.cekRujukanBpjs = async function (req, res) {
                 else {
                     res.send({error_code :response.data.metaData.code, message : "Terjadi Kendala di Server BPJS, Harap Coba Lagi Nanti"});
                 }
+            }
+            else {
+                res.send({error_code :response.status, message : response.error});
             }
         });
 
