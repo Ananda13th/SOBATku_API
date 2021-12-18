@@ -26,7 +26,7 @@ exports.getPendaftaran = function async(req, res) {
         if(error)
             console.log("Error : ", error);
         if(result.length == 0)
-            res.send({error_code : 201, message : "Dokter Tidak Ditemukan"});
+            res.send({error_code : "201", message : "Dokter Tidak Ditemukan"});
         else {
             detailDokter = result[0];
             console.log(result[0]);
@@ -50,7 +50,7 @@ exports.getPendaftaran = function async(req, res) {
                 function(error, result) {
                     if(error) {
                         console.log("Di crate : " + error);
-                        res.send({error_code : 500, message : "Terjadi Kesalahan"});
+                        res.send({error_code : "500", message : "Terjadi Kesalahan"});
                         var newNotif = new Log({
                                 nomor_rm    : response.mr,
                                 id_user     : "Dari RS",
@@ -69,7 +69,7 @@ exports.getPendaftaran = function async(req, res) {
                                 perubahan   : "Pendaftaran Berhasil"+ "\nKode Dokter : " + detailDokter.kode_dokter + "\nKode Jadwal : " + kodeJadwal
                         })
                         Log.create(newNotif, function(error, result) {});
-                        res.send({error_code : 200, message : "Berhasil Tambah Data"});
+                        res.send({error_code : "200", message : "Berhasil Tambah Data"});
                     }
                 })
             }
@@ -87,17 +87,18 @@ exports.editPasien = function async (req, res) {
         function(error, result) {
             if(error) {
                 console.log(error)
+                res.send({error_code : "500", message : "Terjadi Kesalahan"});
             }
             else {
                 if(result == null) {
                     const pasien =new Pasien({
                         nama_pasien : response.name,
-                        nomor_bpjs  : "0000000000000",
-                        nomor_ktp   : "0000000000000000",
+                        nomor_bpjs  : "0",
+                        nomor_ktp   : "0",
                         nomor_rm    : response.new_mr
                     })
                     createPasien(pasien);
-                    res.send({error_code : 200, message : "Sukses"});
+                    res.send({error_code: "200", message : "Sukses"});
                 }
                 else if(result != null) {
                     Pasien.updateFromRs(response, 
@@ -128,14 +129,14 @@ exports.getAntrian = function async (req, res) {
         function(error, result) {
             if(error) {
                 console.log(error);
-                res.send({error_code : 500, message : "Internal Server Error"});
+                res.send({error_code : "500", message : "Internal Server Error"});
             }
             if(result.affectedRows == 0) {
-                res.send({error_code : 201, message : "Antrian Tidak Ditemukan"});
+                res.send({error_code : "201", message : "Antrian Tidak Ditemukan"});
             }
             else {
                 sendNotification(response.kodejadwal, response.antrianberjalan);
-                res.send({error_code : 200, message : "Sukses Update Antrian"});
+                res.send({error_code : "200", message : "Sukses Update Antrian"});
             }
         }
     )
@@ -160,7 +161,7 @@ exports.deleteAntrian = function async(req, res) {
                     perubahan   : "Gagal Hapus Pendaftaran, " + error
                 })
                 Log.create(newNotif, function(error, result) {});
-                res.send({error_code : 500, message : "Internal Server Error"});
+                res.send({error_code : "500", message : "Internal Server Error"});
             }
             if(result.affectedRows == 0) {
                 var newNotif = new Log({
@@ -171,7 +172,7 @@ exports.deleteAntrian = function async(req, res) {
                     perubahan   : "Gagal Hapus Pendaftaran, Antrian atau Nomor Rekam Medis Tidak Ditemukan : " + "\nKode Jadwal : " + response.kodejadwal + "\nRekam Medis : " + response.mr
                 })
                 Log.create(newNotif, function(error, result) {});
-                res.send({error_code : 201, message : "Antrian atau Nomor Rekam Medis Tidak Ditemukan"});
+                res.send({error_code : "201", message : "Antrian atau Nomor Rekam Medis Tidak Ditemukan"});
             }
             else {
                 console.log(result);
@@ -183,7 +184,7 @@ exports.deleteAntrian = function async(req, res) {
                     perubahan   : "Hapus Pendaftaran : " + "\nKode Jadwal : " + response.kodejadwal + "\nRekam Medis : " + response.mr
                 })
                 Log.create(newNotif, function(error, result) {});
-                res.send({error_code : 200, message : "Sukses Hapus Antrian"});
+                res.send({error_code : "200", message : "Sukses Hapus Antrian"});
             }
         }
     )
