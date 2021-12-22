@@ -79,9 +79,9 @@ PendaftaranResp.create = function(newTransaksi, idUser, kodejadwal, kodeDokter, 
     )
 }
 
-PendaftaranResp.hapusTransaksi = function(antrian, result) {
+PendaftaranResp.hapusTransaksi = function(antrian, kodeJadwal, result) {
     dbConn.query(
-        "DELETE FROM transaksi WHERE kode_jadwal = ? AND nomor_rm = ?", [antrian.kodejadwal, antrian.mr],
+        "DELETE FROM transaksi WHERE kode_jadwal = ? AND nomor_rm = ?", [kodeJadwal, antrian.mr],
         function(err, res) {
             if(err) {
                 console.log("error: ", err);
