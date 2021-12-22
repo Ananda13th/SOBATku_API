@@ -27,8 +27,6 @@ const middleware = function (req, res, next) {
     const id = "ancient one";
     var time = req.headers.time;
     var token = req.headers.token;
-    console.log("Time Request : ", req.headers.time);
-    console.log("Server Time  : ", dateNow);
     if(time >= min5 && time <= max5) {
         var secretKey = "secretkey";
         var signature = require('crypto').createHmac("sha256", secretKey).update(id + "&" + time).digest('base64');
