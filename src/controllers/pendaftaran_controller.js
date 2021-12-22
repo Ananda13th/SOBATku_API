@@ -20,9 +20,9 @@ exports.createPendaftaran = async function(req, res) {
     }
     try { 
         /* LIVE */
-        //await axios.post('http://192.167.4.207:9696/pendaftaran/public/index.php/antrian', req.body, config)
+        await axios.post('http://112.109.19.210:9696/pendaftaran/public/index.php/antrian', req.body, config)
         /* DEV */
-        await axios.post('192.167.4.73/antrian/public/index.php/antrian', req.body, config)
+        //await axios.post('192.167.4.73/antrian/public/index.php/antrian', req.body, config)
         .then(function(response) {
             console.log(response);
             if(response.data.status == "100") {
