@@ -28,8 +28,8 @@ exports.getUser = async function (req, res) {
                     if(validPassword)
                         res.send({error_code: 200, message: "Success!", data: result});
                     else
-                          //Bila Nomer HP Ditemukan Tapi Password Salah
-                        res.send({error_code: 201, message: "Data Tidak Ditemukan", data: []});
+                        //Bila Nomer HP Ditemukan Tapi Password Salah
+                        res.send({error_code: 201, message: "Password/Nomor HP Salah", data: []});
                 }
             }
         }
@@ -60,15 +60,20 @@ exports.createUser = async function (req, res) {
     const newUser = new User(req.body);
     User.create(newUser, function(err, user) {
         if(err) {
+            console.log("Error User: ", err.code);
             var newNotif = new Log( {
                 nomor_rm    : "-",
                 id_user     : "-",
                 kode_dokter : "-",
                 keterangan  : "Pendaftaran User",
-                perubahan   : "Pendaftaran User Gagal"
+                perubahan   : "Pendaftaran User Gagal : " + err.code
             })
             Log.create(newNotif, function(error, result) {});
-            res.send("Error : ", err);  
+
+            if(err.code == "ER_DUP_ENTRY")
+                res.send({message: "Nomor HP Sudah Terdaftar", data: null}); 
+            else 
+                res.send({message: "Terjadi Kesalahan : " + err.code, data: null});  
         }
         else {
             var newNotif = new Log( {
