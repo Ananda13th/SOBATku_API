@@ -24,8 +24,8 @@ Dokter.get = function(result) {
 }
 
 Dokter.search = function(kodeDokter, result) {
-    dbConn.query("SELECT * FROM dokter d JOIN spesialisasi s ON d.id_spesialisasi = s.id_spesialisasi"+
-    " WHERE d.kode_dokter = ? ORDER BY d.nama_dokter ASC; ", kodeDokter,
+    dbConn.query("SELECT * FROM dokter d JOIN spesialisasi s ON d.kode_spesialisasi = s.kode_spesialisasi"+
+    " WHERE d.kode_dokter = ?; ", kodeDokter,
         function(err, res) {
             if(err) {
                 console.log("error: ", err);
