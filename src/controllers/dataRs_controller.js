@@ -23,13 +23,14 @@ exports.getPendaftaran = function async(req, res) {
     var rekamMedis = response.mr;
 
     Dokter.search(response.doctor_code, function(error, result) {
-        if(error)
+        if(error) {
+            res.send({error_code : "500", message : "Internal Server Error"});
             console.log("Error : ", error);
-        if(result.length == 0)
+        }
+        else if(result.length == 0)
             res.send({error_code : "201", message : "Dokter Tidak Ditemukan"});
         else {
             detailDokter = result[0];
-            console.log(result[0]);
             dataPendaftaran = new PendaftaranResp({
                 mr                 : rekamMedis,
                 kode_dokter        : response.doctor_code,
@@ -98,7 +99,7 @@ exports.editPasien = function async (req, res) {
                         nomor_rm    : response.new_mr
                     })
                     createPasien(pasien);
-                    res.send({error_code: "200", message : "Sukses"});
+                    res.send({error_code: "200", message : "Sukses Tambah Pasien"});
                 }
                 else if(result != null) {
                     Pasien.updateFromRs(response, 
@@ -108,7 +109,7 @@ exports.editPasien = function async (req, res) {
                             }
                             else {
                                 console.log(result);
-                                res.send(result);
+                                res.send({error_code: "200", message : "Sukses Edit Pasiens"});
                             }
                         }
                     )
@@ -145,18 +146,22 @@ exports.getAntrian = function async (req, res) {
 exports.deleteAntrian = function async(req, res) {
     var response = req.body;
     response.api_key = Buffer.from(response.api_key, 'base64').toString('ASCII');
-    response.kodejadwal = Buffer.from(response.kodejadwal, 'base64').toString('ASCII');
+    response.doctor_code = Buffer.from(response.doctor_code, 'base64').toString('ASCII');
+    response.schedule_date = Buffer.from(response.schedule_date, 'base64').toString('ASCII');
+    response.time_start = Buffer.from(response.time_start, 'base64').toString('ASCII');
     response.mr = Buffer.from(response.mr, 'base64').toString('ASCII');
+    var kodeJadwal = response.doctor_code+"."+moment(response.schedule_date).format("YYMMDD")+response.time_start;
     console.log("Response Dekrip : ", response);
+    console.log("Kode Jadwal : ", kodeJadwal);
 
-    PendaftaranResp.hapusTransaksi(response, 
+    PendaftaranResp.hapusTransaksi(response, kodeJadwal, 
         function(error, result) {
             if(error) {
                 console.log(error);
                 var newNotif = new Log({
                     nomor_rm    : response.mr,
                     id_user     : "Dari RS",
-                    kode_dokter : response.kodejadwal.substring(0,5),
+                    kode_dokter : response.doctor_code,
                     keterangan  : "Hapus Pendaftaran",
                     perubahan   : "Gagal Hapus Pendaftaran, " + error
                 })
@@ -167,7 +172,7 @@ exports.deleteAntrian = function async(req, res) {
                 var newNotif = new Log({
                     nomor_rm    : response.mr,
                     id_user     : "Dari RS",
-                    kode_dokter : response.kodejadwal.substring(0,5),
+                    kode_dokter : response.doctor_code,
                     keterangan  : "Hapus Pendaftaran",
                     perubahan   : "Gagal Hapus Pendaftaran, Antrian atau Nomor Rekam Medis Tidak Ditemukan : " + "\nKode Jadwal : " + response.kodejadwal + "\nRekam Medis : " + response.mr
                 })
@@ -179,7 +184,7 @@ exports.deleteAntrian = function async(req, res) {
                 var newNotif = new Log({
                     nomor_rm    : response.mr,
                     id_user     : "Dari RS",
-                    kode_dokter : response.kodejadwal.substring(0,5),
+                    kode_dokter : response.doctor_code,
                     keterangan  : "Hapus Pendaftaran",
                     perubahan   : "Hapus Pendaftaran : " + "\nKode Jadwal : " + response.kodejadwal + "\nRekam Medis : " + response.mr
                 })
