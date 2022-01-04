@@ -10,8 +10,11 @@ var Dokter = function(dokter) {
 }
 
 Dokter.get = function(result) {
-    dbConn.query("SELECT * FROM dokter d JOIN spesialisasi s ON d.kode_spesialisasi = s.kode_spesialisasi"+
-        " ORDER BY d.nama_dokter ASC; ",
+    dbConn.query("SELECT d.id_dokter, d.kode_dokter, d.foto, d.nama_dokter, s.nama_spesialisasi" +
+        " FROM dokter d JOIN spesialisasi s ON d.kode_spesialisasi = s.kode_spesialisasi"+
+        " INNER JOIN jadwal_dokter jd ON d.kode_dokter = jd.kode_dokter" + 
+        " GROUP BY d.id_dokter, d.kode_dokter, d.foto, d.nama_dokter, s.nama_spesialisasi" +
+        " ORDER BY d.nama_dokter ASC",
         function(err, res) {
             if(err) {
                 console.log("error: ", err);
