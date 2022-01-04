@@ -7,3 +7,5 @@ router.get('/:noBpjs', bpjsController.cekStatusBpjs);
 router.get('/rujukan/:noBpjs', bpjsController.cekRujukanBpjs);
 
 module.exports = router
+
+// cek bpjs aktif atau tidak beserta rujukan pasien bpjs

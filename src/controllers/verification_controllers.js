@@ -5,7 +5,7 @@ const vonage = new Vonage({
     apiKey: "9e0312e3",
     apiSecret: "YYoccYWtrKbK9m95"
   })
-
+// untuk verifikasi pendaftaran pasien kode OTP
 exports.verifyOtp = function async(req, res) {
     User.verify(req.params.nomorHp, req.params.kodeOtp, 
         function(err, result) {

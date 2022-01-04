@@ -2,7 +2,7 @@ const { json } = require("body-parser");
 const Cuti = require("../models/cuti");
 const moment = require('moment');
 
-exports.cariJadwalCuti = function async(req, res) {
+exports.cariJadwalCuti = function async(req, res) {// hp saja
     Cuti.cekCuti(req.params.kodeJadwal, function(error, result) {
         if(error)
             res.send(error);
@@ -15,7 +15,7 @@ exports.cariJadwalCuti = function async(req, res) {
     });
 }
 
-exports.ambilJadwalCuti = function async(req, res) {
+exports.ambilJadwalCuti = function async(req, res) {// admin web
     Cuti.ambilCuti(function(error, result) {
         if(error)
             res.send(error);
@@ -28,7 +28,7 @@ exports.ambilJadwalCuti = function async(req, res) {
     })
 }
 
-exports.buatJadwalCuti = function async(req, res) {
+exports.buatJadwalCuti = function async(req, res) {// admin web
     var request = req.body;
     var startDate = moment(request.mulai);
     var endDate = moment(request.selesai);

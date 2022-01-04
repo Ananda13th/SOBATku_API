@@ -8,3 +8,5 @@ router.post('/:idUser', pendaftaranController.createPendaftaran);
 router.get('/:noRm', pendaftaranController.getPendaftaran);
 
 module.exports = router
+
+// untuk hp saja waktu pendaftaran poli spesialis

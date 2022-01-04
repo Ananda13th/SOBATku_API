@@ -87,15 +87,15 @@ Pasien.searchForEdit = function(request, result) {
 
 Pasien.updateFromRs = function(request, result) {
     dbConn.query("UPDATE pasien SET nama_pasien = ? WHERE nomor_rm = ? ", [request.name, request.new_mr],
-    function(err,res) {
-        if(err) {
-            console.log("error: ", err);
-            result(err, null);
-        } else {
-            result(null, res);
+        function(err,res) {
+            if(err) {
+                console.log("error: ", err);
+                result(err, null);
+            } else {
+                result(null, res);
+            }
         }
-    }
-)
+    )
 }
 
 module.exports = Pasien;

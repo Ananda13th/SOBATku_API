@@ -2,7 +2,7 @@ const {json} = require('body-parser');
 const Pasien = require('../models/pasien');
 const Log = require('../models/log');
 
-
+// nambah pasien setelah user terbentuk hp saja
 exports.getPasien = function(req, res) {
     Pasien.get(req.params.idUser, function(error, pasien) {
         if(error) {

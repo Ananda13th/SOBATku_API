@@ -1,8 +1,8 @@
 const {json} = require('body-parser');
 const Jadwal = require('../models/jadwal');
 
-exports.getJam = function(req, res) {
-    Jadwal.getJam(function(err, result) {
+exports.getJam = function(req, res) {// admin web saja
+    Jadwal.getJam(req.params.kodeDokter, function(err, result) {
         if(err)
             res.send(err);
         else

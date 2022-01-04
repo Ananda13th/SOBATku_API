@@ -1,6 +1,6 @@
 const {json} = require('body-parser');
 const Pairing = require('../models/pairing');
-
+// HP saja
 exports.createPairing = function async(req, res) {
     const newPairing = new Pairing(req.body);
     Pairing.create(newPairing, function(error, result) {

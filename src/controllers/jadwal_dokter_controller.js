@@ -1,6 +1,6 @@
 const {json} = require('body-parser');
 const Jadwal_Dokter = require('../models/jadwal_dokter');
-
+// HP semua
 exports.getJadwalDokter = function(req, res) {
     var dataCollection = [];
 

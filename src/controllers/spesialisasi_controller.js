@@ -1,7 +1,7 @@
 const {json} = require('body-parser');
 const Spesialisasi = require('../models/spesialisasi');
 
-exports.getSpesialisasi = function(req, res) {
+exports.getSpesialisasi = function(req, res) {// hp saja
     Spesialisasi.get(function(err, result) {
         if(err)
             res.send(err);

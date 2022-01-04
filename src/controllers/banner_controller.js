@@ -2,7 +2,7 @@ const Banner = require("../models/banner");
 const moment = require('moment');
 
 
-exports.getBanner = function async(req, res) {
+exports.getBanner = function async(req, res) {// tampilan banner di hp dengan jangka waktu tertentu
     Banner.get(function(error, result) {
         if(error) {
             console.log(error);
@@ -13,7 +13,7 @@ exports.getBanner = function async(req, res) {
     })
 }
 
-exports.getBannerNoFormat = function async(req, res) {
+exports.getBannerNoFormat = function async(req, res) {// tampilan semua banner di web admin
     Banner.getWithoutFormat(function(error, result) {
         if(error)
             res.send(error);
@@ -22,7 +22,7 @@ exports.getBannerNoFormat = function async(req, res) {
     })
 }
 
-exports.addBanner = function async(req, res) {
+exports.addBanner = function async(req, res) {// menambahkan banner dari admin web
     
     var mulai = moment(req.body.mulai);
     var selesai = moment(req.body.selesai);
@@ -39,7 +39,7 @@ exports.addBanner = function async(req, res) {
     })
 }
 
-exports.editBanner = function async(req, res) {
+exports.editBanner = function async(req, res) {// edit banner dari admin web
     Banner.editBanner(req.body, 
         function(error, result) {
             if(error)
@@ -50,7 +50,7 @@ exports.editBanner = function async(req, res) {
     );
 }
 
-exports.deleteBanner = function async(req, res) {
+exports.deleteBanner = function async(req, res) {// delete banner dari admin web
     Banner.delete(req.params.idBanner, 
         function(error, result) {
             if(error)

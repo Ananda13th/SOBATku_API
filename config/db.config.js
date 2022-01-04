@@ -8,3 +8,5 @@ var dbConn = mysql.createPool({
 }); 
 
 module.exports = dbConn;
+
+// pindah komputer delete node_modules kemudian instaal ketik npm install cmd di folder copy an

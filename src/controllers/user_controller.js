@@ -14,7 +14,7 @@ const vonage = new Vonage({
 
 const db = admin.firestore();
 
-exports.getUser = async function (req, res) {
+exports.getUser = async function (req, res) {// ini cek hasil login pasien
     User.get(req.params.noHp, 
         async function(err, result) {
             if(err)
@@ -36,7 +36,7 @@ exports.getUser = async function (req, res) {
     );
 }
 
-exports.getAllUser = async function (req, res) {
+exports.getAllUser = async function (req, res) {// admin saja
     User.getAll(
         function(err, result) {
             if(err)
@@ -53,7 +53,7 @@ exports.getAllUser = async function (req, res) {
     );
 }
 
-exports.createUser = async function (req, res) {
+exports.createUser = async function (req, res) {//admin dan hp
     const salt = await bcrypt.genSalt(10);
     plainPassword = req.body.password;
     req.body.password = await bcrypt.hashSync(req.body.password, salt);
@@ -93,7 +93,7 @@ exports.createUser = async function (req, res) {
     });
 }
 
-exports.updateUSer = async function (req, res) {
+exports.updateUSer = async function (req, res) {//hp
     const salt = await bcrypt.genSalt(10);
     req.params.password = await bcrypt.hash(req.params.password, salt);
     User.update(req.params.id, req.params.email, req.params.password, 
@@ -124,7 +124,7 @@ exports.updateUSer = async function (req, res) {
     )
 }
 
-exports.updateUserAdmin = async function (req, res) {
+exports.updateUserAdmin = async function (req, res) {// penerima kiriman dari admin web untuk perubahan data pasien
     User.updateAdmin(req.body.nama_user, req.body.nomor_hp, req.body.id_user, req.body.email,
         function(err, result) {
             if(err) {
@@ -153,7 +153,7 @@ exports.updateUserAdmin = async function (req, res) {
     )
 }
 
-exports.resetPassword = async function (req,res) {
+exports.resetPassword = async function (req,res) {//hp saja
     console.log("Reset Password");
     const salt = await bcrypt.genSalt(10);
     newPassword = await bcrypt.hash(req.params.password, salt);
@@ -170,7 +170,7 @@ exports.resetPassword = async function (req,res) {
     )
 }
 
-exports.aktivasi = function async (req, res) {
+exports.aktivasi = function async (req, res) {// hp dan admin untuk perubahan status user berhasil terdaftar
     console.log("Aktivasi")
     User.aktivasi(req.params.nomorHp, 
         function(err, result) {
@@ -185,11 +185,11 @@ exports.aktivasi = function async (req, res) {
     )
 }
 
-exports.deleteFromFirebase = async function(req, res) {
+exports.deleteFromFirebase = async function(req, res) {// delete data pasien di firebase (token, id pasien, dll)
     await db.collection("user").doc(req.params.idUser).collection("pasien").doc(req.params.namaPasien).delete();
 }
 
-exports.saveToFirebase = async function(req, res) {
+exports.saveToFirebase = async function(req, res) {// save data pasien token dll
     if(req.body.fcmToken != null){
 
         db.collection('user').doc(req.body.idUser).collection('pasien')

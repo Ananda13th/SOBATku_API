@@ -14,7 +14,7 @@ exports.getNotificationList = function async(req, res) {
     })
 }
 
-exports.sendNotification = function async(kodeJadwal, antrian, res) {
+exports.sendNotification = function async(kodeJadwal, antrian, res) {// notif kiriman antrian dari RS diterima di sini kemudian
     /* CARI DATA PENDAFTARAN DARI KODEJADWAL YANG DIKIRIMKAN DARI RS*/
     PendaftaranResp.search(kodeJadwal, function(error, result) {
         if(error) {
@@ -56,7 +56,7 @@ exports.sendNotification = function async(kodeJadwal, antrian, res) {
     });
 }
 
-function sendNotifFromFirebase(antrianBerjalan, data, dataTransaksi, antrian) {
+function sendNotifFromFirebase(antrianBerjalan, data, dataTransaksi, antrian) {// lanjut disini jika sudah ketemu
     var counter = antrian-antrianBerjalan;
     if(counter == 10 || counter <=5 || antrianBerjalan == 1 && counter > 0) {
         /* MENGAMBIL SEMUA DATA PASIEN DARI ID USER */
@@ -110,7 +110,7 @@ function sendNotifFromFirebase(antrianBerjalan, data, dataTransaksi, antrian) {
     }
 }
 
-exports.notifikasiBebas = function async(req, res) {
+exports.notifikasiBebas = function async(req, res) {// notif dari admin web lanjut custom notif
     Pairing.search(req.params.noRm, function(error, result) {
         if(error)
             res.send(error);
@@ -123,7 +123,7 @@ exports.notifikasiBebas = function async(req, res) {
     })
 }
 
-function sendCustomNotifFromFirebase(data, notifikasi) {
+function sendCustomNotifFromFirebase(data, notifikasi) {// ini custom nya dari admin web
     var id_user = data.id_user.toString();
     db.collection('user').doc(id_user).collection('pasien').get()
     .then(

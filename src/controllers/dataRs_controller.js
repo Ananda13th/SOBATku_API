@@ -5,7 +5,7 @@ const moment = require('moment');
 const { sendNotification } = require('./notification_controller');
 const Pasien = require('../models/pasien');
 const { createPasien } = require('./pasien_controller');
-
+// PENERIMAAN data dari API RS
 exports.getPendaftaran = function async(req, res) {
     var response = req.body
 

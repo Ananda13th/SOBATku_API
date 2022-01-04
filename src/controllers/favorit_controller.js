@@ -1,5 +1,5 @@
 const Dokter = require('../models/dokter');
-
+// HP SAJA
 exports.addDokterFavorit = function(req, res) {
     Dokter.tambahFavorit(req.body,
         function(error, result) {

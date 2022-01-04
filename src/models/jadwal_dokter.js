@@ -18,7 +18,7 @@ JadwalDokter.getBySchedule = function(idSpesialisasi, hari, result) {
         "'jadwal', CONCAT('[', GROUP_CONCAT(JSON_OBJECT( 'jam', jd.jam, 'aktif', jd.aktif, 'id', jd.id_jadwal) ) ,']')) AS data"+ 
         " FROM dokter d"+
         " JOIN jadwal_dokter jd ON d.kode_dokter = jd.kode_dokter"+ 
-        " WHERE d.kode_spesialisasi = ? AND jd.hari= ?" +
+        " WHERE d.kode_spesialisasi = ? AND jd.hari= ? AND jd.aktif= 'Y'" +
         " GROUP BY d.kode_dokter, jd.hari, d.nama_dokter, d.foto;", [idSpesialisasi, hari],
         function(err, res) {
             if(err) {
@@ -40,7 +40,7 @@ JadwalDokter.getById = function(kodeDokter, result) {
         "'jadwal', CONCAT('[', GROUP_CONCAT(JSON_OBJECT( 'jam', jd.jam, 'aktif', jd.aktif, 'id', jd.id_jadwal) ) ,']')) AS data"+ 
         " FROM dokter d"+
         " JOIN jadwal_dokter jd ON d.kode_dokter = jd.kode_dokter"+ 
-        " WHERE d.kode_dokter = ?" +
+        " WHERE d.kode_dokter = ? AND jd.aktif= 'Y'" +
         " GROUP BY d.kode_dokter, jd.hari, d.nama_dokter, d.foto;", kodeDokter,
         function(err, res) {
             if(err) {
