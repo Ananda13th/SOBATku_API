@@ -1,11 +1,21 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const cors = require('cors')
-const {json} = require('body-parser');
-var serviceAccount = require("./sobatku-59e37-firebase-adminsdk-7swhs-f3178a41ac.json");
-var admin = require("firebase-admin");
-const port = process.env.PORT || 3001;
-const app = express();
+// https://expressjs.com/
+const express       = require('express');
+const bodyParser    = require('body-parser');
+const cors          = require('cors')
+const {json}        = require('body-parser');
+var serviceAccount  = require("./sobatku-59e37-firebase-adminsdk-7swhs-f3178a41ac.json");
+var admin           = require("firebase-admin");
+const port          = process.env.PORT || 3001;
+const app           = express();
+
+const corsOptions ={
+    origin:'*', 
+    credentials:true,            //access-control-allow-credentials:true
+    optionSuccessStatus:200,
+}
+
+
+app.use(cors(corsOptions));
 
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
@@ -15,20 +25,20 @@ app.listen(port, () => {
     console.log(`Server is listening on port ${port}`);
 });
 
+
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 
-app.use(cors());
-
 const middleware = function (req, res, next) {
+    console.log(req.headers);
     const dateNow =  Math.floor(new Date().getTime() / 1000);
     var max5 = dateNow + 300;
     var min5 = dateNow - 300;
-    const id = "ancient one";
+    const id = "SOBAtku2107";
     var time = req.headers.time;
     var token = req.headers.token;
     if(time >= min5 && time <= max5) {
-        var secretKey = "secretkey";
+        var secretKey = "kataRahasi4";
         var signature = require('crypto').createHmac("sha256", secretKey).update(id + "&" + time).digest('base64');
         if(token == signature)
             next();
