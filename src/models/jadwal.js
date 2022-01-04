@@ -8,8 +8,8 @@ var Jadwal = function(jadwal) {
     this.jam            = jadwal.jam
 }
 
-Jadwal.getJam = function(result) {
-    dbConn.query("SELECT DISTINCT jam FROM `jadwal` GROUP BY jam ASC",
+Jadwal.getJam = function(kodeDokter, result) {
+    dbConn.query("SELECT DISTINCT jam FROM `jadwal_dokter` WHERE kode_dokter = ? GROUP BY jam ASC", kodeDokter,
     function(err, res) {
         if(err) {
             console.log("error: ", err);
