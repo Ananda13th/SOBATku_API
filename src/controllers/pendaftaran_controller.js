@@ -1,9 +1,10 @@
 const {json} = require('body-parser');
 const e = require('express');
 const { response } = require('express');
+const { pendaftaran_url } = require('../../config/url');
 const Log = require('../models/log');
 const PendaftaranResp = require('../models/pendaftaranResp');
-
+// dari HP nembak ke API pendaftaran RS
 exports.createPendaftaran = async function(req, res) {
     const timestamp = createTimestamp();
     const signature = createSignature(timestamp);
@@ -20,7 +21,7 @@ exports.createPendaftaran = async function(req, res) {
     }
     try { 
         /* LIVE */
-        await axios.post('http://112.109.19.210:9696/pendaftaran/public/index.php/antrian', req.body, config)
+        await axios.post(pendaftaran_url, req.body, config)
         /* DEV */
         //await axios.post('192.167.4.73/antrian/public/index.php/antrian', req.body, config)
         .then(function(response) {
@@ -85,7 +86,7 @@ exports.createPendaftaran = async function(req, res) {
     }
 }
 
-exports.getPendaftaran = function async(req, res) {
+exports.getPendaftaran = function async(req, res) {// untuk penampilan riwayat pendaftaran pasien termasuk yg aktif
     PendaftaranResp.get(req.params.noRm, function(error, result) {
         if(error)
             res.send(error);

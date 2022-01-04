@@ -7,11 +7,12 @@ const user_key = "f8a3cfdfe2df67c7fdac993603794346"
 const axios = require('axios');
 var crypto = require('crypto');
 const { decompressFromEncodedURIComponent } = require('lz-string');
+const { bpjs_url } = require('../../config/url');
  // URL BPJS VER2 PENGEMBANGAN
-const baseUrlBpjs = 'https://apijkn-dev.bpjs-kesehatan.go.id/vclaim-rest-dev/';
+const baseUrlBpjs = bpjs_url;
 
 
-exports.cekStatusBpjs = async function (req, res) {
+exports.cekStatusBpjs = async function (req, res) {// cek no bpjs  pasien di bpjs apakah aktif/tidak
     const timestamp = createTimestamp();
     const signature = createSignature(timestamp);
     const dateTime = new Date(new Date().setHours(new Date().getHours() + 7));
@@ -38,31 +39,31 @@ exports.cekStatusBpjs = async function (req, res) {
             console.log("Response Status   : ", response.status);
             console.log("Response Message  : ", response.statusText);
             if(response.status == "500")
-                res.send({error_code :response.data.metaData.code, message : "Terjadi Kesalahan Saat Koneksi ke Server BPJS, Harap Coba Lagi Nanti"});
+                res.json({error_code :response.data.metaData.code, message : "Terjadi Kesalahan Saat Koneksi ke Server BPJS, Harap Coba Lagi Nanti"});
             else if(response.status == "200"){
                 if(response.data.metaData.code == "200") {
                     var decompressedResponse = decryptResponse(timestamp, response.data.response);  
                     res.json({error_code : "200", data: decompressedResponse.peserta.statusPeserta.keterangan});
                 }
                 else if(response.data.metaData.code == "201") {
-                    res.send({error_code :response.data.metaData.code, message : "Nomor BPJS " + response.data.metaData.message});
+                    res.json({error_code :response.data.metaData.code, message : "Nomor BPJS " + response.data.metaData.message});
                 }
                 else {
                     console.log(response);
-                    res.send({error_code :response.data.metaData.code, message :  response.data.metaData.message});
+                    res.json({error_code :response.data.metaData.code, message :  response.data.metaData.message});
                 }
             }
             else {
-                res.send({error_code :response.status, message : response.statusText});
+                res.json({error_code :response.status, message : response.statusText});
             }
         });
 
     } catch (err) {
-        res.send(err);
+        res.json(err);
     }
 }
 
-exports.cekRujukanBpjs = async function (req, res) {
+exports.cekRujukanBpjs = async function (req, res) {// dipanggil saat pasien daftar poli dengan status bayar BPJS 
     const timestamp = createTimestamp();
     const signature = createSignature(timestamp);
     var config = {
@@ -111,18 +112,18 @@ exports.cekRujukanBpjs = async function (req, res) {
 
 }
 
-function createTimestamp() {
+function createTimestamp() {// dipanggil saat cek status/rujukan no bpjs
     const dateNow = Math.floor(new Date().getTime() / 1000);
     return dateNow.toString();
 }
 
-function createSignature(timestamp) {
+function createSignature(timestamp) {// dipanggil saat cek status/rujukan no bpjs
     var signature = require('crypto').createHmac("sha256", consumer_password)
         .update(consumer_id + "&" + timestamp).digest('base64');
     return signature.toString();
 }
 
-function decryptResponse(timestamp, encryptedString) {
+function decryptResponse(timestamp, encryptedString) {// untuk decrypt saat cek status bpjs pasien
     const key = consumer_id+consumer_password+timestamp
     var key_hash = crypto.createHash("sha256").update(key).digest();
     var iv = key_hash.slice(0,16);
